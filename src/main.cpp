@@ -182,7 +182,13 @@ void IrLogic()
   switch (tmp)
   {
   case Button1:
+    SafetyModule::getInstance().MoveSpeed(false);
+    break;
+  case Button2:
+    SafetyModule::getInstance().MoveSpeed();
+    break;
 
+  case Button5:
     SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.1f, 0.1f);
     break;
   case ButtonUp:
@@ -201,7 +207,7 @@ void IrLogic()
     // SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
     break;
   case ButtonOk:
-    autoMov = !autoMov;
+    // autoMov = !autoMov;
     break;
   default:
     break;

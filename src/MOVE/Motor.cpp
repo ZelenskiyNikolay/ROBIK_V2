@@ -1,46 +1,52 @@
 #include "Motor.h"
 
-Motor::Motor(uint8_t p1, uint8_t p2, uint8_t p3, uint8_t p4)
+Motor::Motor(uint8_t step_pin, uint8_t dir_pin)
 {
-    pins[0] = p1;
-    pins[1] = p2;
-    pins[2] = p3;
-    pins[3] = p4;
+    step = step_pin;
+    dir = dir_pin;
 }
 
 void Motor::begin()
 {
-    for (int i = 0; i < 4; i++)
-    {
-        pinMode(pins[i], OUTPUT);
-        digitalWrite(pins[i], LOW);
-    }
+    pinMode(step, OUTPUT);
+    pinMode(dir, OUTPUT);
+    digitalWrite(step, LOW);
+    digitalWrite(dir, LOW);
 }
 
-void Motor::step(int dir)
+void Motor::Step(bool stip_dir)
 {
-    if (!idel)
-        stepIndex += dir;
-
-    if (stepIndex > 7)
-        stepIndex = 0;
-    if (stepIndex < 0)
-        stepIndex = 7;
-
-    setStep(stepIndex);
-}
-void Motor::setStep(uint8_t s)
-{
+    digitalWrite(dir, stip_dir);
+    digitalWrite(step, HIGH);
+    timer = step_time;
     idel = false;
-    for (int i = 0; i < 4; i++)
-        digitalWrite(pins[i], steps[s][i]);
 }
-void Motor::Idel()
+void Motor::update(float dt)
 {
-    if (!idel)
+    timer -= dt;
+    if (timer < 0)
     {
-        idel = true;
-        for (int i = 0; i < 4; i++)
-            digitalWrite(pins[i], LOW);
+        if (!phaseTwo)
+        {
+            digitalWrite(step, LOW);
+            timer = step_time;
+            phaseTwo = !phaseTwo;
+        }
+        else
+        {
+            phaseTwo = !phaseTwo;
+            idel = true;
+        }
     }
+}
+void Motor::SetSpeed(bool Speed)
+{
+    if(Speed)
+        step_time = MAX_SPEED;
+    else
+        step_time = SLOW_SPEED;
+}
+bool Motor::Idel()
+{
+    return idel;
 }

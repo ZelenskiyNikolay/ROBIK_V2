@@ -1,29 +1,25 @@
 #pragma once
 #include <Arduino.h>
 
-//// Последовательность для half-step (плавно и тихо)
-static const int steps[8][4] = {
-  {1, 0, 0, 0},
-  {1, 1, 0, 0},
-  {0, 1, 0, 0},
-  {0, 1, 1, 0},
-  {0, 0, 1, 0},
-  {0, 0, 1, 1},
-  {0, 0, 0, 1},
-  {1, 0, 0, 1}
-};
+#define MAX_SPEED 0.1f
+#define SLOW_SPEED 1.0f
 
 class Motor
 {
 public:
-    Motor(uint8_t p1, uint8_t p2, uint8_t p3, uint8_t p4);
+    Motor(uint8_t step_pin, uint8_t dir_pin);
 
     void begin();
-    void step(int dir);
-    void Idel();
+    void Step(bool stip_dir);
+    bool Idel();
+    void update(float dt);
+    void SetSpeed(bool Speed);
 private:
-    uint8_t pins[4];
-    int stepIndex = 0;
+    uint8_t step;
+    uint8_t dir;
+    float step_time = MAX_SPEED;
     bool idel = true;
-    void setStep(uint8_t s);
+
+    bool phaseTwo = false;
+    float timer = step_time;   
 };
