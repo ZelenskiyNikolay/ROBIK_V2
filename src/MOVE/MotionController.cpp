@@ -37,18 +37,23 @@ void MotionController::NewMov(MotionState Command, float Left, float Right)
         command.type = Command;
         break;
     case MotionState::TURN_LEFT:
-        command.targetLeft = Left;
+        command.targetLeft = roundf(Left * STEPS_90*4);
+        command.targetRight = roundf(Right * STEPS_90*4);
         command.type = Command;
         break;
     case MotionState::TURN_RIGHT:
-        command.targetRight = Right;
+        command.targetLeft = roundf(Left * STEPS_90*4);
+        command.targetRight = roundf(Right * STEPS_90*4);
         command.type = Command;
         break;
     case MotionState::TURN_LEFT90:
         command.targetLeft = STEPS_90;
+        command.targetRight = STEPS_90;
         command.type = Command;
         break;
     case MotionState::TURN_RIGHT90:
+        command.targetLeft = STEPS_90;
+        command.targetRight = STEPS_90;
         command.type = Command;
         break;
     }
@@ -73,8 +78,6 @@ int MotionController::update(float dt)
     if (command.type == IDLE)
     {
         digitalWrite(EN_PIN, HIGH);
-        // motorL.Idel();
-        // motorR.Idel();
         return 1;
     }
 
@@ -99,12 +102,12 @@ int MotionController::update(float dt)
     case BACKWARD:
         BackwardMov();
         break;
-    // case TURN_LEFT:
-    //     if (command.targetLeft > 2)
-    //         TurnLeft(dl,dr, command.targetLeft);
-    //     else
-    //         TurnLeft(dl,dr);
-    //     break;
+    case TURN_LEFT:
+        Turn90Left();
+        break;
+    case TURN_RIGHT:
+        Turn90Right();
+        break;
     // case TURN_RIGHT:
     //     if (command.targetRight > 2)
     //         TurnRight(dl,dr, command.targetRight);
@@ -114,34 +117,42 @@ int MotionController::update(float dt)
     case TURN_LEFT90:
         Turn90Left();
         break;
-    // case TURN_RIGHT90:
-    //     Turn90Right(dl,dr);
-    //     break;
+    case TURN_RIGHT90:
+        Turn90Right();
+        break;
     case IDLE:
         break;
     }
     return -1;
 }
-float angleDiff(float target, float current)
+
+void MotionController::Turn90Right()
 {
-    float diff = target - current;
+    if (motorL.Idel())
+    {
+        command.targetLeft--;
+        motorL.Step(true);
+    }
 
-    if (diff > 180)
-        diff -= 360;
-    if (diff < -180)
-        diff += 360;
-
-    return diff;
+    if (motorR.Idel())
+    {
+        command.targetRight--;
+        motorR.Step(true);
+    }
 }
-
 void MotionController::Turn90Left()
 {
+    if (motorL.Idel())
+    {
+        command.targetLeft--;
+        motorL.Step(false);
+    }
 
-    motorL.Step(false);
-    motorR.Step(false);
-
-    command.targetRight--;
-    command.targetLeft--;
+    if (motorR.Idel())
+    {
+        command.targetRight--;
+        motorR.Step(false);
+    }
 }
 
 void MotionController::ForwardMov()

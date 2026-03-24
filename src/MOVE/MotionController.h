@@ -4,14 +4,11 @@
 // #include "MotorModule.h"
 // #include "Sensors/RPM_sensor.h"
 
-#define STEPS_90 2245
+#define STEPS_90 1095
 
-#define STEPS_PER_TURN 2048
-#define STEPS_PER_REV 4096 // 28BYJ-48 (half-step)
+#define STEPS_PER_REV 2048 // 28BYJ-48 (half-step)
 
 #define EN_PIN 10
-
-//#define TIME_STEP 1
 
 enum MotionState
 {
@@ -49,6 +46,9 @@ private:
     void ForwardMov();
     void BackwardMov();
     void Turn90Left();
+    void Turn90Right();
+    void TurnLeft();
+    void TurnRight();
 
 public:
     MotionController();

@@ -147,7 +147,7 @@ void setup1()
 {
   delay(1500);
 
-  SafetyModule::getInstance().NewMov(MotionState::FORWARD, 1, 1);
+  SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.01f, 0.01f);
 }
 void loop1()
 {
@@ -162,7 +162,7 @@ void loop1()
     {
       if (!forvard)
       {
-        SafetyModule::getInstance().NewMov(MotionState::FORWARD, 2, 2);
+        SafetyModule::getInstance().NewMov(MotionState::FORWARD, 1, 1);
         forvard = !forvard;
       }
       else
@@ -197,17 +197,20 @@ void IrLogic()
   case ButtonDown:
     SafetyModule::getInstance().NewMov(MotionState::BACKWARD, 1, 1);
     break;
-  case Button3:
-    // SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT, 0, 0);
+  case ButtonStar:
+    SafetyModule::getInstance().NewMov(MotionState::TURN_LEFT, 0.1f, 0.1f);
+    break;
+  case ButtonHash:
+    SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT, 0.1f, 0.1f);
     break;
   case ButtonLeft:
     SafetyModule::getInstance().NewMov(MotionState::TURN_LEFT90);
     break;
   case ButtonRight:
-    // SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
+    SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
     break;
   case ButtonOk:
-    // autoMov = !autoMov;
+     autoMov = !autoMov;
     break;
   default:
     break;
