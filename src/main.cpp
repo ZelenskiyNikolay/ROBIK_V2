@@ -3,6 +3,7 @@
 
 #include "Sensors/Compass.h"
 #include "Sensors/IRSensor.h"
+#include "Module/SDModule.h"
 
 IRSensor ir(23);
 
@@ -11,7 +12,7 @@ float timer_compas = 500;
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 
-#define OLED_DC 16
+#define OLED_DC 21
 #define OLED_CS 17
 #define OLED_RESET 20
 
@@ -51,6 +52,8 @@ float getDeltaTime1()
 
 void IrLogic();
 bool autoMov = false;
+bool SD_REDY = false;
+volatile bool List_Files = false;
 
 void setup()
 {
@@ -83,6 +86,8 @@ void setup()
     Serial.println("Compass fail");
   else
     Serial.println("Compass OK");
+
+  SD_REDY = SDModule::getInstance().begin();
 }
 
 void loop()
@@ -104,7 +109,31 @@ void loop()
     sprintf(buffer1, "Ang:%d''", (int)h);
     display.println(buffer1);
 
+    if (SD_REDY)
+    {
+      display.setCursor(0, 16);
+      display.println("SD Conect OK!!!");
+      Serial.println("SD Conect OK!!!");
+    }
+    else
+    {
+      display.setCursor(0, 16);
+      display.println("SD FAIL!!!");
+      Serial.println("SD FAIL!!!");
+    }
+
     display.display();
+
+    if (List_Files)
+    {
+      if (SD_REDY)
+      {
+        Serial.println("--- Список файлов на карте ---");
+        SDModule::getInstance().ListFiles("/"); // Читаем корень карты 16ГБ
+        Serial.println("------------------------------");
+      }
+      List_Files = false;
+    }
 
     Serial.print(h);
     Serial.println("'");
@@ -210,8 +239,13 @@ void IrLogic()
     SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
     break;
   case ButtonOk:
-     autoMov = !autoMov;
+    autoMov = !autoMov;
     break;
+
+    case Button0:
+    List_Files = true;
+    break;
+    
   default:
     break;
   }
