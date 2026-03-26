@@ -4,8 +4,16 @@
 #include "Sensors/Compass.h"
 #include "Sensors/IRSensor.h"
 #include "Module/SDModule.h"
+#include "Module/USBModule.h"
 
-IRSensor ir(23);
+
+#include "Core/FSM.h"
+#include "State/StateStart.h"
+
+
+FSM *fsm = nullptr;
+
+//IRSensor ir(23);
 
 float timer_compas = 500;
 
@@ -18,6 +26,7 @@ float timer_compas = 500;
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
                          &SPI, OLED_DC, OLED_RESET, OLED_CS);
+DisplayOled displaySys(display);
 
 // MotionController Move;
 bool forvard = false;
@@ -82,63 +91,83 @@ void setup()
 
   display.display();
 
+  
+  fsm = new FSM(new StateStart(displaySys), &displaySys);
+
   if (!Compass::getInstance().begin())
     Serial.println("Compass fail");
   else
     Serial.println("Compass OK");
 
   SD_REDY = SDModule::getInstance().begin();
+  if (SD_REDY)
+    USBModule::getInstance().begin(SDModule::getInstance().getCard());
+
+  
 }
 
 void loop()
 {
   float dt = getDeltaTime();
 
-  Compass::getInstance().update(dt);
-  timer_compas -= dt;
-  if (timer_compas <= 0)
+  //1
+  while (EventBus::hasEvents())
   {
-    float h = Compass::getInstance().getHeading();
-
-    display.clearDisplay();
-
-    display.setTextSize(2);
-    display.setTextColor(SSD1306_WHITE);
-    display.setCursor(0, 0);
-    char buffer1[32];
-    sprintf(buffer1, "Ang:%d''", (int)h);
-    display.println(buffer1);
-
-    if (SD_REDY)
-    {
-      display.setCursor(0, 16);
-      display.println("SD Conect OK!!!");
-      Serial.println("SD Conect OK!!!");
-    }
-    else
-    {
-      display.setCursor(0, 16);
-      display.println("SD FAIL!!!");
-      Serial.println("SD FAIL!!!");
-    }
-
-    display.display();
-
-    if (List_Files)
-    {
-      if (SD_REDY)
-      {
-        Serial.println("--- Список файлов на карте ---");
-        SDModule::getInstance().ListFiles("/"); // Читаем корень карты 16ГБ
-        Serial.println("------------------------------");
-      }
-      List_Files = false;
-    }
-
-    Serial.print(h);
-    Serial.println("'");
-    timer_compas = 1000;
+    fsm->handleEvent(EventBus::poll());
   }
+
+    // 2
+  fsm->update(dt);
+
+  // 3
+  displaySys.update();
+
+
+  Compass::getInstance().update(dt);
+  //timer_compas -= dt;
+  // if (timer_compas <= 0)
+  // {
+  //   float h = Compass::getInstance().getHeading();
+
+  //   display.clearDisplay();
+
+  //   display.setTextSize(2);
+  //   display.setTextColor(SSD1306_WHITE);
+  //   display.setCursor(0, 0);
+  //   char buffer1[32];
+  //   sprintf(buffer1, "Ang:%d''", (int)h);
+  //   display.println(buffer1);
+
+  //   if (SD_REDY)
+  //   {
+  //     display.setCursor(0, 16);
+  //     display.println("SD Conect OK!!!");
+  //     Serial.println("SD Conect OK!!!");
+  //   }
+  //   else
+  //   {
+  //     display.setCursor(0, 16);
+  //     display.println("SD FAIL!!!");
+  //     Serial.println("SD FAIL!!!");
+  //   }
+
+  //   display.display();
+
+  //   if (List_Files)
+  //   {
+  //     if (SD_REDY)
+  //     {
+  //       Serial.println("--- Список файлов на карте ---");
+  //       SDModule::getInstance().ListFiles(); // Читаем корень карты 16ГБ
+  //       Serial.println("------------------------------");
+  //     }
+  //     List_Files = false;
+  //   }
+
+  //   Serial.print(h);
+  //   Serial.println("'");
+  //   timer_compas = 1000;
+  // }
 
   FpsCount(dt);
   tight_loop_contents();
@@ -182,7 +211,7 @@ void loop1()
 {
   float dt1 = getDeltaTime1();
 
-  IrLogic();
+  //IrLogic();
 
   SafetyModule::getInstance().update(dt1);
 
@@ -204,52 +233,52 @@ void loop1()
   tight_loop_contents();
 }
 
-void IrLogic()
-{
-  ir.update();
-  ButtonIR tmp = ir.GetSensorState();
-  switch (tmp)
-  {
-  case Button1:
-    SafetyModule::getInstance().MoveSpeed(false);
-    break;
-  case Button2:
-    SafetyModule::getInstance().MoveSpeed();
-    break;
+// void IrLogic()
+// {
+//   ir.update();
+//   ButtonIR tmp = ir.GetSensorState();
+//   switch (tmp)
+//   {
+//   case Button1:
+//     SafetyModule::getInstance().MoveSpeed(false);
+//     break;
+//   case Button2:
+//     SafetyModule::getInstance().MoveSpeed();
+//     break;
 
-  case Button5:
-    SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.1f, 0.1f);
-    break;
-  case ButtonUp:
-    SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.5f, 0.5f);
-    break;
-  case ButtonDown:
-    SafetyModule::getInstance().NewMov(MotionState::BACKWARD, 1, 1);
-    break;
-  case ButtonStar:
-    SafetyModule::getInstance().NewMov(MotionState::TURN_LEFT, 0.1f, 0.1f);
-    break;
-  case ButtonHash:
-    SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT, 0.1f, 0.1f);
-    break;
-  case ButtonLeft:
-    SafetyModule::getInstance().NewMov(MotionState::TURN_LEFT90);
-    break;
-  case ButtonRight:
-    SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
-    break;
-  case ButtonOk:
-    autoMov = !autoMov;
-    break;
+//   case Button5:
+//     SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.1f, 0.1f);
+//     break;
+//   case ButtonUp:
+//     SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.5f, 0.5f);
+//     break;
+//   case ButtonDown:
+//     SafetyModule::getInstance().NewMov(MotionState::BACKWARD, 1, 1);
+//     break;
+//   case ButtonStar:
+//     SafetyModule::getInstance().NewMov(MotionState::TURN_LEFT, 0.1f, 0.1f);
+//     break;
+//   case ButtonHash:
+//     SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT, 0.1f, 0.1f);
+//     break;
+//   case ButtonLeft:
+//     SafetyModule::getInstance().NewMov(MotionState::TURN_LEFT90);
+//     break;
+//   case ButtonRight:
+//     SafetyModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
+//     break;
+//   case ButtonOk:
+//     autoMov = !autoMov;
+//     break;
 
-    case Button0:
-    List_Files = true;
-    break;
-    
-  default:
-    break;
-  }
-}
+//   case Button0:
+//     List_Files = true;
+//     break;
+
+//   default:
+//     break;
+//   }
+// }
 void FpsCount1(float dt)
 {
   callsPerSecond1++;
