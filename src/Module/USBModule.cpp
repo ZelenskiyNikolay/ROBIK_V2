@@ -1,34 +1,44 @@
 #include "USBModule.h"
 
-// Инициализация статики
 SdFat* USBModule::_sd_ptr = nullptr;
 Adafruit_USBD_MSC USBModule::usb_msc;
+
+USBModule::USBModule() {}
+
+USBModule::~USBModule() {
+    stop(); // При удалении объекта гасим всё
+}
 
 bool USBModule::begin(SdFat* sd_ptr) {
     if (!sd_ptr) return false;
     _sd_ptr = sd_ptr;
 
-    // Настройка имени устройства (как оно будет видно в Windows)
-    usb_msc.setID("Robik-2", "SD Flash", "1.0");
+    usb_msc.setID("Robik-2", "SD Flash", "1.1"); // Версия 1.1!
     usb_msc.setReadWriteCallback(msc_read_cb, msc_write_cb, msc_flush_cb);
     
-    // Получаем количество секторов через метод card()
     uint32_t sectorCount = _sd_ptr->card()->sectorCount();
-    if (sectorCount == 0) return false;
-
     usb_msc.setCapacity(sectorCount, 512);
     usb_msc.setUnitReady(true);
     
     return usb_msc.begin();
 }
 
+void USBModule::stop() {
+    usb_msc.setUnitReady(false); // Говорим ПК, что диск извлечен
+    TinyUSBDevice.detach();      // Физически отключаемся от шины
+    _sd_ptr = nullptr;
+}
+
 bool USBModule::isConnected() {
     return tud_mounted();
 }
 
-void USBModule::update() {
-    // Для ядра Earlephilhower стек USB обрабатывается в фоне, 
-    // но если будут лаги, можно добавить сюда вызовы TinyUSB_Device_Task()
+bool USBModule::isCableConnected() {
+    return tud_connected();  // ← физическое подключение
+}
+
+bool USBModule::isMounted() {
+    return tud_mounted();              // ← диск открыт ПК
 }
 
 int32_t USBModule::msc_read_cb(uint32_t lba, void* buffer, uint32_t bufsize) {

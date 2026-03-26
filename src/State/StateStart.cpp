@@ -16,6 +16,7 @@ void StateStart::enter()
     display->drawText("press 1 to start.", 0, 55, 1);
 
     num_menu = false;
+    ir.begin();
 }
 void StateStart::update(float dt)
 {
@@ -35,7 +36,7 @@ void StateStart::IrLogic()
         EventBus::push({EVENT_CHANGE_STATE, STATE_NORMAL});
         break;
     case Button3:
-        
+        EventBus::push({EVENT_CHANGE_STATE, STATE_USB});
         break;
     default:
         break;

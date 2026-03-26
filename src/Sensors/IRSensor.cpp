@@ -3,10 +3,12 @@
 
 IRSensor::IRSensor(int pin) : SensorPin(pin)
 {
+}
+void IRSensor::begin()
+{
     pinMode(SensorPin, INPUT);
     IrReceiver.begin(SensorPin);
 }
-
 void IRSensor::update()
 {
 

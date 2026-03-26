@@ -100,8 +100,8 @@ void setup()
     Serial.println("Compass OK");
 
   SD_REDY = SDModule::getInstance().begin();
-  if (SD_REDY)
-    USBModule::getInstance().begin(SDModule::getInstance().getCard());
+  //if (SD_REDY)
+    //USBModule::getInstance().begin(SDModule::getInstance().getCard());
 
   
 }

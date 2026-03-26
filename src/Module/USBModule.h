@@ -5,21 +5,19 @@
 
 class USBModule {
 public:
-    static USBModule &getInstance() {
-        static USBModule instance;
-        return instance;
-    }
+    USBModule();  // Обычный конструктор
+    ~USBModule(); // Деструктор для очистки!
 
-    // Передаем указатель на сам объект SdFat
     bool begin(SdFat* sd_ptr); 
+    void stop();
     bool isConnected();
-    void update();
-
+    bool isCableConnected();
+    bool isMounted();
 private:
-    USBModule() {}
-    static SdFat* _sd_ptr; // Храним указатель на основной объект
+    static SdFat* _sd_ptr;
     static Adafruit_USBD_MSC usb_msc;
 
+    // Эти функции обязаны быть статическими для TinyUSB
     static int32_t msc_read_cb(uint32_t lba, void* buffer, uint32_t bufsize);
     static int32_t msc_write_cb(uint32_t lba, uint8_t* buffer, uint32_t bufsize);
     static void msc_flush_cb(void);

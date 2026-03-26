@@ -27,6 +27,7 @@ class IRSensor
 {
 public:
     IRSensor(int pin);
+    void begin();
     void update();
     ButtonIR GetSensorState();
 

@@ -4,6 +4,7 @@
 // #include "State/StateCalibration.h"
 #include "State/StateNormal.h"
 #include "State/StateStart.h" 
+#include "State/StateUsb.h"
 // #include "State/StateSearchBase.h"
 
 class FSM {

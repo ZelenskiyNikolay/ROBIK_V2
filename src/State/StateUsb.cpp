@@ -1,0 +1,53 @@
+#include "StateUsb.h"
+
+StateUsb::StateUsb(DisplayOled &disp) : display(&disp), ir(23) {}
+
+void StateUsb::enter()
+{
+    display->clear();
+    display->drawText(" USB MODE", 0, 0, 2);
+    display->drawText("Connected to PC", 0, 30, 1);
+    display->drawText("DO NOT DISCONNECT", 0, 50, 1);
+
+    digitalWrite(OLED_CS, HIGH);
+
+    delay(100);
+
+    usb = new USBModule();
+    usb->begin(SDModule::getInstance().getCard());
+
+
+    TinyUSBDevice.detach();
+    delay(50);
+    TinyUSBDevice.attach();
+}
+
+void StateUsb::update(float dt)
+{
+    tud_task(); // КРИТИЧЕСКИ ВАЖНО: без этого стек не обновит статус
+
+    // Если кабель вынут, стек перейдет в состояние "не готов" 
+    // гораздо быстрее, чем в "unmounted"
+    bool currentConnected = tud_ready(); 
+
+    if (!isMounted) 
+    {
+        if (currentConnected) isMounted = true;
+        return;
+    }
+
+    // Если связь была, но пропала
+    if (!currentConnected) 
+    {
+        // ВНИМАНИЕ: TinyUSB на RP2040 иногда нужно "подтолкнуть"
+        // Проверяем еще раз через микропаузу
+        busy_wait_us(10000);
+        tud_task(); 
+        
+        if (!tud_ready()) 
+        {
+            usb->stop();
+            watchdog_reboot(0, 0, 0);
+        }
+    }
+}

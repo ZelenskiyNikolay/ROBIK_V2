@@ -7,7 +7,8 @@ enum StateID {
     STATE_NORMAL = 2,
     STATE_SLEEPY = 3,
     STATE_CLOCK  = 4,
-    STATE_SEARCH_BASE = 5
+    STATE_SEARCH_BASE = 5,
+    STATE_USB = 6
 };
 
 class State {
