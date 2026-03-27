@@ -6,14 +6,16 @@
 #include "Module/SDModule.h"
 #include "Module/USBModule.h"
 
-
 #include "Core/FSM.h"
 #include "State/StateStart.h"
 
+#include "Sound/Hello.h"
+#include "Sound/SoundModule.h"
+#include "Sound/SoundManager.h"
 
 FSM *fsm = nullptr;
 
-//IRSensor ir(23);
+// IRSensor ir(23);
 
 float timer_compas = 500;
 
@@ -67,12 +69,7 @@ volatile bool List_Files = false;
 void setup()
 {
   Serial.begin(9600);
-  delay(1000);
-
-  Serial.println("Serial Active");
-
   SPI.begin();
-  // SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
 
   delay(200); // дать питанию и SPI стабилизироваться
 
@@ -91,7 +88,6 @@ void setup()
 
   display.display();
 
-  
   fsm = new FSM(new StateStart(displaySys), &displaySys);
 
   if (!Compass::getInstance().begin())
@@ -100,34 +96,39 @@ void setup()
     Serial.println("Compass OK");
 
   SD_REDY = SDModule::getInstance().begin();
-  //if (SD_REDY)
-    //USBModule::getInstance().begin(SDModule::getInstance().getCard());
 
-  
+  SoundManager::getInstance().Init();
 }
 
 void loop()
 {
   float dt = getDeltaTime();
 
-  //1
+  timer_compas -= dt;
+  if (!SoundManager::getInstance().Is_Playing())//timer_compas <= 0)
+  { 
+    SoundManager::getInstance().Play(Hello,sizeof(Hello));
+    //timer_compas = 10000;
+  }
+
+  SoundManager::getInstance().update();
+  // 1
   while (EventBus::hasEvents())
   {
     fsm->handleEvent(EventBus::poll());
   }
 
-    // 2
+  // 2
   fsm->update(dt);
 
   // 3
   displaySys.update();
 
-
   Compass::getInstance().update(dt);
-  //timer_compas -= dt;
-  // if (timer_compas <= 0)
-  // {
-  //   float h = Compass::getInstance().getHeading();
+  // timer_compas -= dt;
+  //  if (timer_compas <= 0)
+  //  {
+  //    float h = Compass::getInstance().getHeading();
 
   //   display.clearDisplay();
 
@@ -203,6 +204,8 @@ void FpsCount(float dt)
 static bool led = false;
 void setup1()
 {
+  SoundModule::getInstance().Init();
+
   delay(1500);
 
   SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.01f, 0.01f);
@@ -211,7 +214,7 @@ void loop1()
 {
   float dt1 = getDeltaTime1();
 
-  //IrLogic();
+  // IrLogic();
 
   SafetyModule::getInstance().update(dt1);
 
