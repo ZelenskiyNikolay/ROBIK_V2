@@ -18,8 +18,48 @@ void SoundManager::Init()
     // Теперь менеджер знает, чем управлять, не имея жестких дефайнов
 }
 
+void SoundManager::Play(const char* filename) {
+    _isSD = true;
+    // 1. Если уже что-то поет — глушим
+    if (audioBridge.isPlaying) {
+        audioBridge.isPlaying = false;
+        // Даем Ядру 1 время выйти из прерывания, если нужно
+        delay(1); 
+    }
+
+    // 2. Пытаемся открыть файл через наш новый стрим
+    if (_sdStream.open(filename)) {
+        _activeStream = &_sdStream; // Указываем, что сейчас поем с SD
+
+        // 3. Пропускаем WAV заголовок (44 байта)
+        uint8_t header[44];
+        _activeStream->read(header, 44);
+
+        // 4. Предзагрузка буферов (важно для бесшовного старта)
+        if (_activeStream->isAvailable()) {
+            uint32_t rA = _activeStream->read(audioBridge.bufferA, AudioBridge::BUF_SIZE);
+            audioBridge.readyA = (rA > 0);
+        }
+        if (_activeStream->isAvailable()) {
+            uint32_t rB = _activeStream->read(audioBridge.bufferB, AudioBridge::BUF_SIZE);
+            audioBridge.readyB = (rB > 0);
+        }
+
+        // 5. Поехали!
+        audioBridge.isPlaying = true;
+        if (_en_pin != 0) digitalWrite(_en_pin, LOW); 
+        
+        Serial.print("Playing from SD: ");
+        Serial.println(filename);
+    } else {
+        Serial.print("Failed to open: ");
+        Serial.println(filename);
+    }
+}
+
 void SoundManager::Play(const uint8_t *data, uint32_t size)
 {
+    _isSD = false;
     _source = data;
     _totalSize = size;
     _cursor = HEADER_SIZE;
@@ -52,36 +92,42 @@ bool SoundManager::Is_Playing()
     return audioBridge.isPlaying;
 }
 
-void SoundManager::update()
-{
-    if (!audioBridge.isPlaying)
-        return;
+void SoundManager::update() {
+    if (!audioBridge.isPlaying) return;
 
-    // Если Ядро 1 освободило буфер А
-    if (!audioBridge.readyA && _cursor < _totalSize)
-    {
-        uint32_t toCopy = min(AudioBridge::BUF_SIZE, _totalSize - _cursor);
-        memcpy(audioBridge.bufferA, _source + _cursor, toCopy);
-        _cursor += toCopy;
-        audioBridge.readyA = true;
-    }
-
-    // Если Ядро 1 освободило буфер B
-    if (!audioBridge.readyB && _cursor < _totalSize)
-    {
-        uint32_t toCopy = min(AudioBridge::BUF_SIZE, _totalSize - _cursor);
-        memcpy(audioBridge.bufferB, _source + _cursor, toCopy);
-        _cursor += toCopy;
-        audioBridge.readyB = true;
-    }
-
-    // Конец файла
-    if (_cursor >= _totalSize && !audioBridge.readyA && !audioBridge.readyB)
-    {
-        Stop();
+    if (_isSD) {
+        if (_activeStream == nullptr) return;
+        // --- БЛОК ДЛЯ SD-КАРТЫ ---
+        if (!audioBridge.readyA && _sdStream.isAvailable()) {
+            uint32_t r = _sdStream.read(audioBridge.bufferA, AudioBridge::BUF_SIZE);
+            if (r > 0) audioBridge.readyA = true;
+            else Stop(); 
+        }
+        if (!audioBridge.readyB && _sdStream.isAvailable()) {
+            uint32_t r = _sdStream.read(audioBridge.bufferB, AudioBridge::BUF_SIZE);
+            if (r > 0) audioBridge.readyB = true;
+            else Stop();
+        }
+    } 
+    else {
+        // --- ТВОЙ СТАРЫЙ БЛОК ДЛЯ МАССИВА (Flash) ---
+        if (!audioBridge.readyA && _cursor < _totalSize) {
+            uint32_t toCopy = min(AudioBridge::BUF_SIZE, _totalSize - _cursor);
+            memcpy(audioBridge.bufferA, _source + _cursor, toCopy);
+            _cursor += toCopy;
+            audioBridge.readyA = true;
+        }
+        if (!audioBridge.readyB && _cursor < _totalSize) {
+            uint32_t toCopy = min(AudioBridge::BUF_SIZE, _totalSize - _cursor);
+            memcpy(audioBridge.bufferB, _source + _cursor, toCopy);
+            _cursor += toCopy;
+            audioBridge.readyB = true;
+        }
+        if (_cursor >= _totalSize && !audioBridge.readyA && !audioBridge.readyB) {
+            Stop();
+        }
     }
 }
-
 void SoundManager::Stop()
 {
     audioBridge.isPlaying = false;

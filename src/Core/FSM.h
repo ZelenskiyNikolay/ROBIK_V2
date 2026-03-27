@@ -17,6 +17,8 @@ public:
     void handleEvent(Event e);
     void changeState(State* next);
     void changeStateById(StateID id);
+
+    StateID current_state=STATE_START;
 private:
     State* current;
     DisplayOled* display;

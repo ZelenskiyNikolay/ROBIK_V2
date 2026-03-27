@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "AudioBridge.h"
+#include "SDStream.h"
 
 class SoundManager
 {
@@ -11,6 +12,7 @@ public:
         return instance;
     }
     void Play(const uint8_t *data, uint32_t size);
+    void Play(const char* filename);
     void update(); // Вызывать в основном loop() на Core 0
     void Stop();
     void Init();
@@ -22,4 +24,8 @@ private:
     uint32_t _totalSize = 0;
     uint32_t _cursor = 0;
     const uint32_t HEADER_SIZE = 44; // Пропуск WAV заголовка
+
+    SDStream _sdStream;
+    FileStream* _activeStream = nullptr;
+    bool _isSD = false;
 };

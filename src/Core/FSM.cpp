@@ -42,6 +42,8 @@ void FSM::changeState(State *next)
 void FSM::changeStateById(StateID id)
 {
     State *next = nullptr;
+    
+    current_state = id;
 
     switch (id)
     {

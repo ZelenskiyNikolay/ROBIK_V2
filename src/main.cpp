@@ -79,24 +79,20 @@ void setup()
       ;
   }
 
-  display.clearDisplay();
+  // display.clearDisplay();
 
-  display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-  display.println("TEST");
+  // display.setTextSize(2);
+  // display.setTextColor(SSD1306_WHITE);
+  // display.setCursor(0, 0);
+  // display.println("TEST");
 
-  display.display();
+  // display.display();
 
   fsm = new FSM(new StateStart(displaySys), &displaySys);
 
-  if (!Compass::getInstance().begin())
-    Serial.println("Compass fail");
-  else
-    Serial.println("Compass OK");
+  Compass::getInstance().begin();
 
-  SD_REDY = SDModule::getInstance().begin();
-
+  SDModule::getInstance().begin();
   SoundManager::getInstance().Init();
 }
 
@@ -105,11 +101,13 @@ void loop()
   float dt = getDeltaTime();
 
   timer_compas -= dt;
-  if (!SoundManager::getInstance().Is_Playing())//timer_compas <= 0)
+  if (timer_compas <= 0 && fsm->current_state==STATE_START)//!SoundManager::getInstance().Is_Playing())//
   { 
-    SoundManager::getInstance().Play(Hello,sizeof(Hello));
-    //timer_compas = 10000;
+    SoundManager::getInstance().Play("Sound/Hello/hello.wav");
+    timer_compas = 10000;
   }
+  if(fsm->current_state!=STATE_START)
+    SoundManager::getInstance().Stop();
 
   SoundManager::getInstance().update();
   // 1
