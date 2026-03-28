@@ -1,5 +1,6 @@
 #pragma once
 #include "Motor.h"
+#include "MOVE/Motion.h"
 //#include "Sensors/Compass.h"
 // #include "MotorModule.h"
 // #include "Sensors/RPM_sensor.h"
@@ -10,23 +11,6 @@
 
 #define EN_PIN 10
 
-enum MotionState
-{
-    IDLE,
-    FORWARD,
-    BACKWARD,
-    TURN_LEFT,
-    TURN_RIGHT,
-    TURN_LEFT90,
-    TURN_RIGHT90
-};
-
-struct MotionCommand
-{
-    MotionState type;
-    float targetLeft;
-    float targetRight;
-};
 
 class MotionController
 {

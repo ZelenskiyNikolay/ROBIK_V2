@@ -1,21 +1,34 @@
 #include "SafetyModule.h"
 
 SafetyModule::SafetyModule()
-    : sensorLeft(24), sensorRight(25), motion()//, sensorBack(14), sensorBackFlow(15),
-     // ultrasonic(28, 3), motion()
+    : sensorLeft(24), sensorRight(25), motion() //, sensorBack(14), sensorBackFlow(15),
+                                                // ultrasonic(28, 3), motion()
 {
-    //ultrasonic.begin();
+    // ultrasonic.begin();
     CheckSensors();
     motion.begin();
 }
 
-void SafetyModule::TriggerUltrasonic() {}// ultrasonic.Trigger(); }
-float SafetyModule::GetDistance() {return -1; }//return ultrasonic.getDistance(); }
+void SafetyModule::TriggerUltrasonic() {}        // ultrasonic.Trigger(); }
+float SafetyModule::GetDistance() { return -1; } // return ultrasonic.getDistance(); }
 
-void SafetyModule::MoveSpeed(bool HiSpeed){motion.MoveSpeed(HiSpeed);}
+void SafetyModule::MoveSpeed(bool HiSpeed) { motion.MoveSpeed(HiSpeed); }
 
 void SafetyModule::update(float dt)
 {
+    if (!isBusy())
+    {
+        if (moveBridge.New_Command)
+        {
+            MoveSpeed(moveBridge.HiSpeed);
+            NewMov(moveBridge.Command,moveBridge.Left,moveBridge.Right);
+            moveBridge.IsBusy = true;
+            moveBridge.New_Command = false;
+        }
+        else
+        moveBridge.IsBusy = false;
+    }
+
     if (corection)
     {
         CheckSensors();
@@ -25,8 +38,6 @@ void SafetyModule::update(float dt)
     }
     if (CheckSensors())
     {
-        // завершено аварийно
-        //motion.SafatyStop();
         corection = true;
     }
     else
@@ -86,9 +97,9 @@ bool SafetyModule::CheckSensors()
 {
     bool Left = sensorLeft.GetSensorState();
     bool Right = sensorRight.GetSensorState();
-    //bool BackFlow = sensorBackFlow.GetSensorState();
-    //bool Back = sensorBack.GetSensorState();
-    if (Left && Right)// && BackFlow && !Back)
+    // bool BackFlow = sensorBackFlow.GetSensorState();
+    // bool Back = sensorBack.GetSensorState();
+    if (Left && Right) // && BackFlow && !Back)
         sensorTrigger = SafetyTriger::NONE;
     else if (!Left)
         sensorTrigger = SafetyTriger::SENSOR_LEFT;
@@ -99,7 +110,7 @@ bool SafetyModule::CheckSensors()
     // else if (Back)
     //     sensorTrigger = SafetyTriger::SENSOR_BACK;
 
-    return (!Left || !Right);// || !BackFlow || Back);
+    return (!Left || !Right); // || !BackFlow || Back);
 }
 
 bool SafetyModule::isBusy() const
@@ -110,5 +121,5 @@ void SafetyModule::NewMov(MotionState Command, float Left, float Right)
 {
     motion.NewMov(Command, Left, Right);
 }
-//long SafetyModule::GetTics(bool left) { return motion.GetTics(left); }
-//void SafetyModule::StopMov(){ motion.SafatyStop();}
+// long SafetyModule::GetTics(bool left) { return motion.GetTics(left); }
+// void SafetyModule::StopMov(){ motion.SafatyStop();}

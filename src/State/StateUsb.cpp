@@ -26,8 +26,7 @@ void StateUsb::update(float dt)
 {
     tud_task(); // КРИТИЧЕСКИ ВАЖНО: без этого стек не обновит статус
 
-    // Если кабель вынут, стек перейдет в состояние "не готов" 
-    // гораздо быстрее, чем в "unmounted"
+    
     bool currentConnected = tud_ready(); 
 
     if (!isMounted) 
@@ -39,8 +38,6 @@ void StateUsb::update(float dt)
     // Если связь была, но пропала
     if (!currentConnected) 
     {
-        // ВНИМАНИЕ: TinyUSB на RP2040 иногда нужно "подтолкнуть"
-        // Проверяем еще раз через микропаузу
         busy_wait_us(10000);
         tud_task(); 
         

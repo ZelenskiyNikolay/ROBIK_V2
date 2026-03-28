@@ -17,6 +17,8 @@ void StateStart::enter()
 
     num_menu = false;
     ir.begin();
+
+    MovementModule::getInstance().Init();
 }
 void StateStart::update(float dt)
 {
@@ -38,6 +40,20 @@ void StateStart::IrLogic()
     case Button3:
         EventBus::push({EVENT_CHANGE_STATE, STATE_USB});
         break;
+
+    case ButtonUp:
+        MovementModule::getInstance().NewMov(MotionState::FORWARD,0.5f,0.5f);
+        break;
+    case ButtonDown:
+        MovementModule::getInstance().NewMov(MotionState::BACKWARD,0.5f,0.5f);
+        break;
+    case ButtonLeft:
+        MovementModule::getInstance().NewMov(MotionState::TURN_LEFT90);
+        break;
+    case ButtonRight:
+        MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
+        break;
+
     default:
         break;
     }

@@ -12,6 +12,8 @@
 #include "Sensors/IRSensor.h"
 // #include "Module/PowerModule.h"
 
+#include "MOVE/MovementModule.h"
+
 enum MenuShow
 {
     LABEL,
