@@ -74,5 +74,8 @@ void SoundModule::handle_interrupt()
         }
     }
 
+    if (!audioBridge.readyA && !audioBridge.readyB)
+        audioBridge.isPlaying = false;
+        
     pwm_set_gpio_level(_audio_pin, sample);
 }

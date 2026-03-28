@@ -3,7 +3,7 @@
 #include "hardware/pwm.h"
 #include "hardware/irq.h"
 #include "Sound/AudioBridge.h"
-
+#include "Sound/SoundManager.h"
 
 #define AUDIO_PIN 13
 #define AUDIO_EN_PIN 14
