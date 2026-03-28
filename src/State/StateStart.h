@@ -6,7 +6,7 @@
 #include "Display/DisplayOled.h"
 #include "Display/SpriteOled.h"
 // #include "Sound/SoundManager.h"
-// #include "Module/BatteryModule.h"
+#include "Module/BatteryModule.h"
 // #include "Settings/GlobalSettings.h"
 #include "Core/EventBus.h"
 #include "Sensors/IRSensor.h"

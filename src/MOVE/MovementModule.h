@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "MOVE/Motion.h"
-#include "MOVE/MovementBridge"
+#include "MOVE/MovementBridge.h"
 
 class MovementModule
 {

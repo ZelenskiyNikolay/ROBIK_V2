@@ -37,9 +37,13 @@ void StateStart::IrLogic()
     case Button1:
         EventBus::push({EVENT_CHANGE_STATE, STATE_NORMAL});
         break;
+    case Button2:
+        menu = BATARY;
+        break;
     case Button3:
         EventBus::push({EVENT_CHANGE_STATE, STATE_USB});
         break;
+    
 
     case ButtonUp:
         MovementModule::getInstance().NewMov(MotionState::FORWARD,0.5f,0.5f);
@@ -82,27 +86,27 @@ void StateStart::DrawLabel()
 
     display->drawText("  ROBIK", 0, 0, 2);
     display->drawText("              v2.2+", 0, 20, 1);
-    display->drawText("press 3 Battary %", 0, 45, 1);
+    display->drawText("press 3 USB MOD", 0, 35, 1);
+    display->drawText("press 2 Battary %", 0, 45, 1);
     display->drawText("press 1 to start.", 0, 55, 1);
 }
 void StateStart::SensorBat()
 {
+    display->drawText("BATTERY SENSOR:", 0, 0, 1);
+    char buffer1[16];
+    int percent = BatteryModule::getInstance().getBatteryPercent();
 
-    // display->drawText("BATTERY SENSOR:", 0, 0, 1);
-    // char buffer1[16];
-    // int percent = BatteryModule::getInstance().getBatteryPercent();
+    BatteryModule::getInstance().drawBatteryIcon(*display, 0, 10, percent);
 
-    // BatteryModule::getInstance().drawBatteryIcon(*display, 0, 10, percent);
+    sprintf(buffer1, "Charge:%02d%s", percent, " %");
+    display->drawText(buffer1, 0, 40, 1);
 
-    // sprintf(buffer1, "Charge:%02d%s", percent, " %");
-    // display->drawText(buffer1, 0, 40, 1);
+    float v = BatteryModule::getInstance().getVoltage();
+    int whole = v;
+    int fract = (v - whole) * 100;
 
-    // float v = BatteryModule::getInstance().getVoltage();
-    // int whole = v;
-    // int fract = (v - whole) * 100;
-
-    // sprintf(buffer1, "Voltage:%d.%02d V", whole, fract);
-    // display->drawText(buffer1, 0, 50, 1);
+    sprintf(buffer1, "Voltage:%d.%02d V", whole, fract);
+    display->drawText(buffer1, 0, 50, 1);
 }
 void StateStart::ChargeBat()
 {

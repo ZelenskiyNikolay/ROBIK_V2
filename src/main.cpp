@@ -13,6 +13,8 @@
 #include "Sound/SoundModule.h"
 #include "Sound/SoundManager.h"
 
+#include "Module/BatteryModule.h"
+
 FSM *fsm = nullptr;
 
 // IRSensor ir(23);
@@ -94,6 +96,7 @@ void setup()
 
   SDModule::getInstance().begin();
   SoundManager::getInstance().Init();
+  BatteryModule::getInstance().begin(A0);
 }
 
 void loop()
@@ -103,13 +106,14 @@ void loop()
   timer_compas -= dt;
   if (timer_compas <= 0 && fsm->current_state==STATE_START)//!SoundManager::getInstance().Is_Playing())//
   { 
-    SoundManager::getInstance().Play("Sound/Hello/hello.wav");
+    //SoundManager::getInstance().Play("Sound/Hello/hello.wav");
     timer_compas = 10000;
   }
-  if(fsm->current_state!=STATE_START)
-    SoundManager::getInstance().Stop();
+  // if(fsm->current_state!=STATE_START)
+  //   SoundManager::getInstance().Stop();
 
   SoundManager::getInstance().update();
+  BatteryModule::getInstance().update(dt);
   // 1
   while (EventBus::hasEvents())
   {

@@ -6,6 +6,7 @@
 // #include "Sound/SoundManager.h"
 #include "Core/FSM.h"
 #include "Sensors/IRSensor.h"
+#include "Sound/SoundManager.h"
 //#include <RTClib.h>
 // #include "Module/RTCModule.h"
 // #include "Settings/GlobalSettings.h"
@@ -56,7 +57,7 @@ private:
     DisplayOled *display;
     SpriteOled sprite;
     // Sound sound;
-    //IRSensor ir;
+    IRSensor ir;
     float blinkTimer = 3000;
     bool dance = true;
 };

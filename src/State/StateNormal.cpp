@@ -1,7 +1,7 @@
 #include "StateNormal.h"
 
 StateNormal::StateNormal(DisplayOled &disp)
-    : display(&disp), sprite(&disp)//, sound(12), ir(A7)
+    : display(&disp), sprite(&disp), ir(23)
 {
 }
 
@@ -14,8 +14,44 @@ void StateNormal::enter()
 }
 void StateNormal::update(float dt)
 {
+  IrLogic();
   Draw(dt);
   
+}
+
+
+void StateNormal::IrLogic()
+{
+    ir.update();
+    ButtonIR tmp = ir.GetSensorState();
+    switch (tmp)
+    {
+    case Button1:
+        SoundManager::getInstance().Play("Sound/Hello/Dima.wav");
+        break;
+    case Button2:
+        break;
+    case ButtonHash:
+        EventBus::push({EVENT_CHANGE_STATE, STATE_START});
+        break;
+    
+
+    case ButtonUp:
+        MovementModule::getInstance().NewMov(MotionState::FORWARD,0.5f,0.5f);
+        break;
+    case ButtonDown:
+        MovementModule::getInstance().NewMov(MotionState::BACKWARD,0.5f,0.5f);
+        break;
+    case ButtonLeft:
+        MovementModule::getInstance().NewMov(MotionState::TURN_LEFT90);
+        break;
+    case ButtonRight:
+        MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void StateNormal::Draw(float dt)
@@ -43,3 +79,4 @@ void StateNormal::Draw(float dt)
     }
   }
 }
+
