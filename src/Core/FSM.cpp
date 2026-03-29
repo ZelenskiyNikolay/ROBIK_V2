@@ -47,9 +47,7 @@ void FSM::changeStateById(StateID id)
 
     switch (id)
     {
-    case STATE_NORMAL:
-        next = new StateNormal(*display);
-        break;
+    case STATE_NORMAL: next = new StateNormal(*display);  break;
     case STATE_START:      next = new StateStart(*display);      break;
     case STATE_USB:      next = new StateUsb(*display);      break;
     // case STATE_SLEEPY:      next = new StateSleepy(*display);      break;

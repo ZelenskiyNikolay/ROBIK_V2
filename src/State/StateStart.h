@@ -52,6 +52,5 @@ private:
 
     DisplayOled *display;
     SpriteOled sprite;
-    IRSensor ir;
     // Sound sound;
 };

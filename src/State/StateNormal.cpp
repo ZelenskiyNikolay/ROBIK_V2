@@ -1,7 +1,7 @@
 #include "StateNormal.h"
 
 StateNormal::StateNormal(DisplayOled &disp)
-    : display(&disp), sprite(&disp), ir(23)
+    : display(&disp), sprite(&disp)
 {
 }
 
@@ -22,14 +22,17 @@ void StateNormal::update(float dt)
 
 void StateNormal::IrLogic()
 {
-    ir.update();
-    ButtonIR tmp = ir.GetSensorState();
+    ButtonIR tmp = IRSensor::getInstance().GetSensorState();
     switch (tmp)
     {
     case Button1:
         SoundManager::getInstance().Play("Sound/Hello/Dima.wav");
         break;
     case Button2:
+        SoundManager::getInstance().Play("Sound/Hello/Aliona.wav");
+        break;
+    case Button3:
+        SoundManager::getInstance().Play("Sound/Hello/Mama.wav");
         break;
     case ButtonHash:
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});

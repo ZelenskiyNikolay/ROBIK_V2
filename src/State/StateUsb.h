@@ -19,10 +19,6 @@ public:
     void update(float dt) override;
 
 private:
-    
-
-
     DisplayOled *display;
-    IRSensor ir;
     USBModule* usb = nullptr;
 };

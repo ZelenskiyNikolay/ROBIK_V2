@@ -57,7 +57,6 @@ private:
     DisplayOled *display;
     SpriteOled sprite;
     // Sound sound;
-    IRSensor ir;
     float blinkTimer = 3000;
     bool dance = true;
 };

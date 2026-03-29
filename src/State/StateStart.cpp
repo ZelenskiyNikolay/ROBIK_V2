@@ -1,7 +1,7 @@
 #include "StateStart.h"
 
 StateStart::StateStart(DisplayOled &disp)
-    : display(&disp), sprite(&disp), ir(23)
+    : display(&disp), sprite(&disp)
 {
 }
 
@@ -16,7 +16,6 @@ void StateStart::enter()
     display->drawText("press 1 to start.", 0, 55, 1);
 
     num_menu = false;
-    ir.begin();
 
     MovementModule::getInstance().Init();
 }
@@ -30,8 +29,8 @@ void StateStart::update(float dt)
 
 void StateStart::IrLogic()
 {
-    ir.update();
-    ButtonIR tmp = ir.GetSensorState();
+    
+    ButtonIR tmp = IRSensor::getInstance().GetSensorState();
     switch (tmp)
     {
     case Button1:
@@ -45,17 +44,8 @@ void StateStart::IrLogic()
         break;
     
 
-    case ButtonUp:
-        MovementModule::getInstance().NewMov(MotionState::FORWARD,0.5f,0.5f);
-        break;
-    case ButtonDown:
-        MovementModule::getInstance().NewMov(MotionState::BACKWARD,0.5f,0.5f);
-        break;
-    case ButtonLeft:
-        MovementModule::getInstance().NewMov(MotionState::TURN_LEFT90);
-        break;
-    case ButtonRight:
-        MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
+    case ButtonHash:
+        menu = LABEL;
         break;
 
     default:

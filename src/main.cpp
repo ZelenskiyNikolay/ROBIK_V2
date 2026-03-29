@@ -14,6 +14,7 @@
 #include "Sound/SoundManager.h"
 
 #include "Module/BatteryModule.h"
+#include "Module/RTCModule.h"
 
 FSM *fsm = nullptr;
 
@@ -97,6 +98,8 @@ void setup()
   SDModule::getInstance().begin();
   SoundManager::getInstance().Init();
   BatteryModule::getInstance().begin(A0);
+  IRSensor::getInstance().begin(23);
+  RTCModule::getInstance().begin();
 }
 
 void loop()
@@ -114,6 +117,9 @@ void loop()
 
   SoundManager::getInstance().update();
   BatteryModule::getInstance().update(dt);
+  IRSensor::getInstance().update();
+  RTCModule::getInstance().update(dt);
+  
   // 1
   while (EventBus::hasEvents())
   {

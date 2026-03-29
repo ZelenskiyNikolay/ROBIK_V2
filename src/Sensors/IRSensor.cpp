@@ -1,11 +1,11 @@
 #include "IRSensor.h"
 #include <IRremote.hpp>
 
-IRSensor::IRSensor(int pin) : SensorPin(pin)
+IRSensor::IRSensor() {}
+
+void IRSensor::begin(int pin)
 {
-}
-void IRSensor::begin()
-{
+    SensorPin = pin;
     pinMode(SensorPin, INPUT);
     IrReceiver.begin(SensorPin);
 }

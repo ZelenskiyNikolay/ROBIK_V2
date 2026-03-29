@@ -1,6 +1,6 @@
 #include "StateUsb.h"
 
-StateUsb::StateUsb(DisplayOled &disp) : display(&disp), ir(23) {}
+StateUsb::StateUsb(DisplayOled &disp) : display(&disp) {}
 
 void StateUsb::enter()
 {

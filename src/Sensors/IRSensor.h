@@ -26,12 +26,17 @@ enum ButtonIR
 class IRSensor
 {
 public:
-    IRSensor(int pin);
-    void begin();
+    static IRSensor &getInstance()
+    {
+        static IRSensor instance;
+        return instance;
+    }
+    void begin(int pin);
     void update();
     ButtonIR GetSensorState();
 
 private:
+    IRSensor();
     int SensorPin;
     ButtonIR lastState = NOOL;
 };
