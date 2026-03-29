@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/State.h"
-// #include "Module/RTCModule.h"
+#include "Module/RTCModule.h"
 // #include "Module/GlobalSensorsModule.h"
 #include "Display/DisplayOled.h"
 #include "Display/SpriteOled.h"
@@ -48,7 +48,7 @@ private:
     bool num_menu = false;
     bool showBattery = false;
 
-    // DateTime _time;
+    DateTime _time;
 
     DisplayOled *display;
     SpriteOled sprite;

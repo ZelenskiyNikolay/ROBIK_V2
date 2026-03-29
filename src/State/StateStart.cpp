@@ -22,14 +22,13 @@ void StateStart::enter()
 void StateStart::update(float dt)
 {
     IrLogic();
-    
-    Draw(dt);
 
+    Draw(dt);
 }
 
 void StateStart::IrLogic()
 {
-    
+
     ButtonIR tmp = IRSensor::getInstance().GetSensorState();
     switch (tmp)
     {
@@ -42,8 +41,13 @@ void StateStart::IrLogic()
     case Button3:
         EventBus::push({EVENT_CHANGE_STATE, STATE_USB});
         break;
-    
 
+    case ButtonStar:
+        if (menu != Time)
+            menu = Time;
+        else
+            menu = LABEL;
+        break;
     case ButtonHash:
         menu = LABEL;
         break;
@@ -120,17 +124,23 @@ void StateStart::ChargeBat()
 
 void StateStart::DrawClock(float dt)
 {
+    display->clear();
 
-    // display->clear();
+    _time = RTCModule::getInstance().getTime();
+    char buffer[9]; // "HH:MM"
 
-    // _time = RTCModule::getInstance().getTime();
-    // char buffer[9]; // "HH:MM"
-    // sprintf(buffer, "%02d:%02d", _time.hour(), _time.minute());
+    auto second = _time.second();
+    if (second % 2 == 0)
+        sprintf(buffer, "%02d:%02d", _time.hour(), _time.minute());
+    else
+        sprintf(buffer, "%02d %02d", _time.hour(), _time.minute());
 
-    // Serial.print("RTC cached: ");
-    // Serial.print(_time.hour());
-    // Serial.print(":");
-    // Serial.println(_time.minute());
+    Serial.print("RTC cached: ");
+    Serial.print(_time.hour());
+    Serial.print(":");
+    Serial.println(_time.minute());
 
-    // display->drawText(buffer, 0, 0, 4);
+    display->drawText(buffer, 0, 0, 4);
+    sprintf(buffer, "%02d/%02d", _time.day(), _time.month());
+    display->drawText(buffer, 0, 32, 4);
 }
