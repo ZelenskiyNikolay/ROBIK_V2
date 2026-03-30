@@ -17,6 +17,7 @@ public:
     void setCursor(int16_t x, int16_t y);
     void println(char str);
     void setContrast(uint8_t value);
+    void nightMod(bool  night= true);
 
     void clear();
     void update();

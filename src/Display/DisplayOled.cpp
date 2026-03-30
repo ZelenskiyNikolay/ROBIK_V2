@@ -11,6 +11,21 @@ void DisplayOled::clear()
     display->clearDisplay();
 }
 
+void DisplayOled::nightMod(bool night)
+{
+    display->dim(night);
+    // if (night)
+    // {
+    //     display->ssd1306_command(SSD1306_SETCONTRAST);
+    //     display->ssd1306_command(0);
+    // }
+    // else
+    // {
+    //     display->ssd1306_command(SSD1306_SETCONTRAST);
+    //     display->ssd1306_command(250);
+    // }
+}
+
 void DisplayOled::drawText(const char *text, int x, int y, int size)
 {
     display->setTextColor(SSD1306_WHITE);
@@ -55,7 +70,7 @@ void DisplayOled::setTextColor(uint16_t color)
 }
 void DisplayOled::setCursor(int16_t x, int16_t y)
 {
-    display->setTextColor(x,y);
+    display->setTextColor(x, y);
 }
 void DisplayOled::println(char str)
 {

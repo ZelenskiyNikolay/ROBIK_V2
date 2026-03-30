@@ -33,20 +33,28 @@ void StateStart::IrLogic()
     switch (tmp)
     {
     case Button1:
-        EventBus::push({EVENT_CHANGE_STATE, STATE_NORMAL});
+        if (menu == LABEL)
+            EventBus::push({EVENT_CHANGE_STATE, STATE_NORMAL});
         break;
     case Button2:
         menu = BATARY;
         break;
     case Button3:
-        EventBus::push({EVENT_CHANGE_STATE, STATE_USB});
+        if (menu == LABEL)
+            EventBus::push({EVENT_CHANGE_STATE, STATE_USB});
         break;
 
     case ButtonStar:
         if (menu != Time)
+        {
             menu = Time;
+            display->nightMod();
+        }
         else
+        {
             menu = LABEL;
+            display->nightMod(false);
+        }
         break;
     case ButtonHash:
         menu = LABEL;
