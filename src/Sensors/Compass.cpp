@@ -35,7 +35,6 @@ void Compass::update(float dt)
         float xf = (float)x - x_offset;
         float yf = (float)y - y_offset;
 
-        // SCALE CORRECTION
         xf *= avg_scale / x_scale;
         yf *= avg_scale / y_scale;
 
@@ -50,7 +49,7 @@ void Compass::update(float dt)
         if (diff < -180)
             diff += 360;
 
-        // Твоя идея усреднения (пополам), но примененная к разнице
+        //усреднение (пополам)
         heading += diff / 2;
 
         // Возвращаем в диапазон 0-360

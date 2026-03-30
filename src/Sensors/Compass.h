@@ -1,6 +1,6 @@
 #pragma once
 #include <Adafruit_QMC5883P.h>
-#define COMPASS_UPDATE_TIME 500
+#define COMPASS_UPDATE_TIME 200
 
 class Compass
 {

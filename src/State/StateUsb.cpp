@@ -7,7 +7,7 @@ void StateUsb::enter()
     display->clear();
     display->drawText(" USB MODE", 0, 0, 2);
     display->drawText("Connected to PC", 0, 30, 1);
-    display->drawText("DO NOT DISCONNECT", 0, 50, 1);
+    display->drawText("Eject Cable to Exit", 0, 50, 1);
 
     digitalWrite(OLED_CS, HIGH);
 
@@ -15,7 +15,6 @@ void StateUsb::enter()
 
     usb = new USBModule();
     usb->begin(SDModule::getInstance().getCard());
-
 
     TinyUSBDevice.detach();
     delay(50);
@@ -25,8 +24,7 @@ void StateUsb::enter()
 void StateUsb::update(float dt)
 {
     tud_task(); // КРИТИЧЕСКИ ВАЖНО: без этого стек не обновит статус
-
-    
+   
     bool currentConnected = tud_ready(); 
 
     if (!isMounted) 

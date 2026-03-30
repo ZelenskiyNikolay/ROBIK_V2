@@ -16,15 +16,10 @@ public:
     }
      bool begin();
      void ListFiles();
-     // Метод для получения целого числа по ключу
-    int getIntConfig(const char* key, int defaultValue);
-    
-    // Метод для получения float
-    float getFloatConfig(const char* key, float defaultValue);
+
     void  CreateFile(const char* file_name);
     SdFat* getCard() { return &sd; }
 private:
     SDModule() {}
     SdFat sd;
-    bool CreateConfigFile();
 };

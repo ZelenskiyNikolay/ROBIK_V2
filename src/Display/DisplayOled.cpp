@@ -11,20 +11,7 @@ void DisplayOled::clear()
     display->clearDisplay();
 }
 
-void DisplayOled::nightMod(bool night)
-{
-    display->dim(night);
-    // if (night)
-    // {
-    //     display->ssd1306_command(SSD1306_SETCONTRAST);
-    //     display->ssd1306_command(0);
-    // }
-    // else
-    // {
-    //     display->ssd1306_command(SSD1306_SETCONTRAST);
-    //     display->ssd1306_command(250);
-    // }
-}
+void DisplayOled::nightMod(bool night){display->dim(night);}
 
 void DisplayOled::drawText(const char *text, int x, int y, int size)
 {
