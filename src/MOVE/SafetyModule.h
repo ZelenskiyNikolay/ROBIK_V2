@@ -14,7 +14,6 @@ enum SafetyTriger
     SENSOR_LEFT,
     SENSOR_RIGHT,
     SENSOR_BACK,
-    SENSOR_BACK_FLOW,
     MENY_SENSORS
 };
 
@@ -41,7 +40,7 @@ private:
     SafetyModule();
     MotionController motion;
     SurfaceSensor sensorLeft, sensorRight;
-   // SurfaceSensor sensorBack, sensorBackFlow;
+    SurfaceSensor sensorBack;
 
     SafetyTriger sensorTrigger = SafetyTriger::NONE;
 

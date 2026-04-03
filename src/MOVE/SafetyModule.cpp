@@ -1,7 +1,7 @@
 #include "SafetyModule.h"
 
 SafetyModule::SafetyModule()
-    : sensorLeft(24), sensorRight(25), motion() //, sensorBack(14), sensorBackFlow(15),
+    : sensorLeft(11), sensorRight(12), sensorBack(24), motion()
                                                 // ultrasonic(28, 3), motion()
 {
     // ultrasonic.begin();
@@ -20,13 +20,25 @@ void SafetyModule::update(float dt)
     {
         if (moveBridge.New_Command)
         {
-            MoveSpeed(moveBridge.HiSpeed);
-            NewMov(moveBridge.Command,moveBridge.Left,moveBridge.Right);
-            moveBridge.IsBusy = true;
-            moveBridge.New_Command = false;
+            switch (moveBridge.Command)
+            {
+            case SET_SPEED:
+                MoveSpeed(moveBridge.HiSpeed);
+                moveBridge.New_Command = false;
+                break;
+            case IDLE:
+                StopMov();
+            break;
+            default:
+                MoveSpeed(moveBridge.HiSpeed);
+                NewMov(moveBridge.Command, moveBridge.Left, moveBridge.Right);
+                moveBridge.IsBusy = true;
+                moveBridge.New_Command = false;
+                break;
+            }
         }
         else
-        moveBridge.IsBusy = false;
+            moveBridge.IsBusy = false;
     }
 
     if (corection)
@@ -45,6 +57,8 @@ void SafetyModule::update(float dt)
         motion.update(dt);
     }
 }
+
+void SafetyModule::StopMov() {}
 // bool SafetyModule::EdgeAlignment()
 // {
 //     bool Left = sensorLeft.GetSensorState();
@@ -82,9 +96,6 @@ void SafetyModule::Corection()
     case SafetyTriger::SENSOR_BACK:
         NewMov(MotionState::FORWARD, 0.1, 0.1);
         break;
-    case SafetyTriger::SENSOR_BACK_FLOW:
-        NewMov(MotionState::FORWARD, 0.1, 0.1);
-        break;
     case SafetyTriger::NONE:
         corection = false;
         break;
@@ -97,20 +108,18 @@ bool SafetyModule::CheckSensors()
 {
     bool Left = sensorLeft.GetSensorState();
     bool Right = sensorRight.GetSensorState();
-    // bool BackFlow = sensorBackFlow.GetSensorState();
-    // bool Back = sensorBack.GetSensorState();
-    if (Left && Right) // && BackFlow && !Back)
+    bool Back = sensorBack.GetSensorState();
+
+    if (Left && Right &&  Back)
         sensorTrigger = SafetyTriger::NONE;
     else if (!Left)
         sensorTrigger = SafetyTriger::SENSOR_LEFT;
     else if (!Right)
         sensorTrigger = SafetyTriger::SENSOR_RIGHT;
-    // else if (!BackFlow)
-    //     sensorTrigger = SafetyTriger::SENSOR_BACK_FLOW;
-    // else if (Back)
-    //     sensorTrigger = SafetyTriger::SENSOR_BACK;
+    else if (!Back)
+        sensorTrigger = SafetyTriger::SENSOR_BACK;
 
-    return (!Left || !Right); // || !BackFlow || Back);
+    return (!Left || !Right || !Back);
 }
 
 bool SafetyModule::isBusy() const
