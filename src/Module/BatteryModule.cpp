@@ -1,42 +1,55 @@
 #include "BatteryModule.h"
 
-void BatteryModule::begin(uint8_t pin) {
+void BatteryModule::begin(uint8_t pin)
+{
     this->pin = pin;
     pinMode(pin, INPUT);
     analogReadResolution(12);
 }
 
-void BatteryModule::update(float dt) {
+void BatteryModule::update(float dt)
+{
 
     timer -= dt;
 
-    if (timer>0) return;  // обновление раз в 20 секунд
+    if (timer > 0)
+        return; // обновление раз в 20 секунд
 
     timer = timeUpdate;
 
     int raw = analogRead(pin);
-    voltage = (raw / 4095.0f) * 3.3f * 2.0f;  // измеренное напряжение
+    voltage = (raw / 4095.0f) * 3.3f * 2.0f; // измеренное напряжение
 
-    //voltage *= 0.95f; //калибровка
+    // voltage *= 0.95f; //калибровка
 
-    Serial.print("Battery: ");
-    Serial.print(getVoltage());//Печать значения в порт
-    Serial.println(" V");
+    if (voltage < 1.0f)
+    {
+        Serial.println("Battery: Not conect or Power Off.....");
+    }
+    else
+    {
+        Serial.print("Battery: ");
+        Serial.print(getVoltage()); // Печать значения в порт
+        Serial.println(" V");
+    }
 }
 
-float BatteryModule::getVoltage() const {
+float BatteryModule::getVoltage() const
+{
     return voltage;
 }
 int BatteryModule::getBatteryPercent()
 {
-    
+
     float voltage = getVoltage();
 
     // Адаптируй под свой делитель!
-    if (voltage > 4.1f) return 100;
-    if (voltage < 3.40f) return 0;
+    if (voltage > 4.1f)
+        return 100;
+    if (voltage < 3.40f)
+        return 0;
 
-    //return map(voltage * 100, 340, 420, 0, 100);
+    // return map(voltage * 100, 340, 420, 0, 100);
     float percent = (voltage - 3.40f) / (4.15f - 3.40f) * 100.0f;
     return (int)constrain(percent, 0, 100);
 }

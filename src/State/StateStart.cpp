@@ -143,11 +143,6 @@ void StateStart::DrawClock(float dt)
     else
         sprintf(buffer, "%02d %02d", _time.hour(), _time.minute());
 
-    Serial.print("RTC cached: ");
-    Serial.print(_time.hour());
-    Serial.print(":");
-    Serial.println(_time.minute());
-
     display->drawText(buffer, 0, 0, 4);
     sprintf(buffer, "%02d/%02d", _time.day(), _time.month());
     display->drawText(buffer, 0, 32, 4);

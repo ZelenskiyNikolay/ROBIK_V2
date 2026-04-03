@@ -29,11 +29,8 @@ private:
 
     void ForwardMov();
     void BackwardMov();
-    void Turn90Left();
-    void Turn90Right();
     void TurnLeft();
     void TurnRight();
-
 public:
     MotionController();
     void begin();

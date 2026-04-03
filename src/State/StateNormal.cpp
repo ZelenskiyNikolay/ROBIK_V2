@@ -19,7 +19,7 @@ void StateNormal::update(float dt)
   
 }
 
-
+bool HiSpeed= true;
 void StateNormal::IrLogic()
 {
     ButtonIR tmp = IRSensor::getInstance().GetSensorState();
@@ -38,6 +38,17 @@ void StateNormal::IrLogic()
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});
         break;
     
+    case Button4:
+        MovementModule::getInstance().NewMov(MotionState::TURN_LEFT);
+        break;
+    case Button6:
+        MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT);
+        break;
+
+    case Button0:
+        HiSpeed = !HiSpeed;
+        MovementModule::getInstance().MoveSpeed(HiSpeed);
+        break;
 
     case ButtonUp:
         MovementModule::getInstance().NewMov(MotionState::FORWARD,0.5f,0.5f);

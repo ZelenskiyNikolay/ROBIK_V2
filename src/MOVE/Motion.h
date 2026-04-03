@@ -7,7 +7,8 @@ enum MotionState
     TURN_LEFT,
     TURN_RIGHT,
     TURN_LEFT90,
-    TURN_RIGHT90
+    TURN_RIGHT90,
+    SET_SPEED
 };
 
 struct MotionCommand
