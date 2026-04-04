@@ -5,6 +5,7 @@
 #include "Module/SDModule.h"
 #include <hardware/watchdog.h>
 #include "hardware/structs/usb.h"
+#include "Sensors/IRSensor.h"
 
 #define OLED_CS 17
 
@@ -17,6 +18,7 @@ public:
     void update(float dt) override;
 
 private:
+    void IrLogic();
     DisplayOled *display;
     USBModule* usb = nullptr;
 };
