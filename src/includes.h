@@ -19,6 +19,8 @@
 #include "Sound/SoundModule.h"
 #include "Sound/SoundManager.h"
 
+#include "SoundMic/MicRecorder.h"
+
 #include "Module/BatteryModule.h"
 #include "Module/RTCModule.h"
 

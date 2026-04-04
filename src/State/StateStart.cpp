@@ -44,6 +44,11 @@ void StateStart::IrLogic()
             EventBus::push({EVENT_CHANGE_STATE, STATE_USB});
         break;
 
+    case Button4:
+        if (menu == LABEL)
+            EventBus::push({EVENT_CHANGE_STATE, STATE_VOICE_RECORD});
+        break;
+
     case ButtonStar:
         if (menu != Time)
         {

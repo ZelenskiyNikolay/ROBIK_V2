@@ -5,6 +5,7 @@
 #include "State/StateNormal.h"
 #include "State/StateStart.h" 
 #include "State/StateUsb.h"
+#include "State/StateVoiceRecord.h"
 // #include "State/StateSearchBase.h"
 
 class FSM {

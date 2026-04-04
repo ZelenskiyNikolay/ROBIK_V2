@@ -96,6 +96,7 @@ void setup1()
   delay(1500);
 
   SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.01f, 0.01f);
+  MicRecorder::getInstance().Init(27);
 }
 void loop1()
 {

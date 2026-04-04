@@ -28,5 +28,4 @@ private:
     volatile uint32_t current_sample = HEADER_SIZE;
     const uint32_t total_samples = 72980; // Твой размер
     uint slice_num;
-
 };
