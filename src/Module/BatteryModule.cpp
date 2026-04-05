@@ -3,7 +3,7 @@
 void BatteryModule::begin(uint8_t pin)
 {
     this->pin = pin;
-    pinMode(pin, INPUT);
+    adc_gpio_init(pin);
     analogReadResolution(12);
 }
 
@@ -17,21 +17,45 @@ void BatteryModule::update(float dt)
 
     timer = timeUpdate;
 
-    int raw = analogRead(pin);
-    voltage = (raw / 4095.0f) * 3.3f * 2.0f; // измеренное напряжение
+    adc_run(false);             // 1. Ставим микрофон на паузу
+    
+    // Определяем канал (пин 26 = 0, 27 = 1 и т.д.)
+    adc_select_input(this->pin - 26); // 2. Явно переключаемся на АКБ
+    
+    adc_read();                 // 3. Холостой замер (сливаем остатки звука)
+    int raw = adc_read();       // 4. Реальное чтение вольтажа
+    
+    adc_select_input(1);        // 5. ВОЗВРАЩАЕМ АЦП микрофону (пин 27)
+    adc_run(true);              // 6. Снова запускаем микрофонный конвейер
+    // ------------------------------------------
 
-    // voltage *= 0.95f; //калибровка
+    voltage = (raw / 4095.0f) * 3.3f * 2.0f;
 
-    if (voltage < 1.0f)
-    {
-        Serial.println("Battery: Not conect or Power Off.....");
-    }
-    else
-    {
+    if (voltage < 1.0f) {
+        Serial.println("Battery: Not connect or Power Off.....");
+    } else {
         Serial.print("Battery: ");
-        Serial.print(getVoltage()); // Печать значения в порт
+        Serial.print(voltage); 
         Serial.println(" V");
     }
+
+    // int raw = analogRead(pin);
+
+
+    // voltage = (raw / 4095.0f) * 3.3f * 2.0f; // измеренное напряжение
+
+    // // voltage *= 0.95f; //калибровка
+
+    // if (voltage < 1.0f)
+    // {
+    //     Serial.println("Battery: Not conect or Power Off.....");
+    // }
+    // else
+    // {
+    //     Serial.print("Battery: ");
+    //     Serial.print(getVoltage()); // Печать значения в порт
+    //     Serial.println(" V");
+    // }
 }
 
 float BatteryModule::getVoltage() const

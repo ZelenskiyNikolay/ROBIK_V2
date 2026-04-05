@@ -1,6 +1,8 @@
 #pragma once
 #include <Arduino.h>
 #include "Display/DisplayOled.h"
+#include "hardware/adc.h"
+#include "hardware/irq.h"
 
 class BatteryModule {
 public:
