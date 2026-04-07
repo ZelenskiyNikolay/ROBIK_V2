@@ -21,6 +21,12 @@ public:
         return _file.open(card, path, O_READ);
     }
 
+    uint32_t write(const int16_t *buffer, uint32_t size)
+    {
+        if (!_file.isOpen())
+            return 0;
+        return _file.write(buffer, size);
+    }
     uint32_t write(const uint16_t *buffer, uint32_t size)
     {
         if (!_file.isOpen())

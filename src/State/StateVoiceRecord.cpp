@@ -35,9 +35,40 @@ void StateVoiceRecord::update(float dt)
     }
 
     IrLogic();
-    Draw(dt);
+
+    if (draw_MAE)
+        Draw_MAE(dt);
+    else
+        Draw(dt);
 }
 
+#define MAE_PRINT_UPDATE 500
+void StateVoiceRecord::Draw_MAE(float dt)
+{
+    if (!recorder.IS_MAE_READY())
+        return;
+    timer -= dt;
+    if (timer > 0)
+        return;
+    timer = MAE_PRINT_UPDATE;
+
+    display->clear();
+    display->drawText("MAE Level:", 0, 0, 1);
+
+    int X = 0;
+    for (int i = 0; i < MAE_BUF_SIZE; i++)
+    {
+        int h = recorder.MAE[i] / 100;
+        if (h > 50)
+            h = 50;
+        if (h < 1)
+            h = 1;
+        display->drawLine(X, 64, X, 64 - h);
+        X++;
+    }
+    display->drawLine(0, 13, 81, 13);
+    display->drawLine(81, 13, 81, 64);
+}
 void StateVoiceRecord::Draw(float dt)
 {
     timer -= dt;
@@ -51,8 +82,9 @@ void StateVoiceRecord::Draw(float dt)
 
         display->drawText("Voice ", 0, 0, 2);
         display->drawText("  Recorder", 0, 20, 2);
-        display->drawText("press OK for record!", 0, 45, 1);
-        display->drawText("press # for exit.", 0, 55, 1);
+        display->drawText("press * for MAE print", 0, 40, 1);
+        display->drawText("press OK for record!", 0, 48, 1);
+        display->drawText("press # for exit.", 0, 56, 1);
     }
     else
     {
@@ -90,24 +122,33 @@ void StateVoiceRecord::IrLogic()
         }
         break;
     case ButtonStar:
+        draw_MAE = !draw_MAE;
 
-        Serial.println("Буфер А:");
-        for (int i = 0; i < 2048; i++)
+        Serial.print("MAE: ");
+        for (int i = 0; i < MAE_BUF_SIZE; i++)
         {
-            Serial.print(recordBridge.bufferA[i]);
+            Serial.print(recorder.MAE[i]);
             Serial.print(", ");
         }
-
-        Serial.println();
-
-        Serial.println("Буфер B:");
-        for (int i = 0; i < 2048; i++)
-        {
-            Serial.print(recordBridge.bufferB[i]);
-            Serial.print(", ");
-        }
+        Serial.println("... END MAE");
 
         break;
+        // Serial.println("Буфер А:");
+        // for (int i = 0; i < 2048; i++)
+        // {
+        //     Serial.print(recordBridge.bufferA[i]);
+        //     Serial.print(", ");
+        // }
+
+        // Serial.println();
+
+        // Serial.println("Буфер B:");
+        // for (int i = 0; i < 2048; i++)
+        // {
+        //     Serial.print(recordBridge.bufferB[i]);
+        //     Serial.print(", ");
+        // }
+
     case ButtonHash:
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});
         break;

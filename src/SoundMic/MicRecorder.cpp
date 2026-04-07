@@ -34,11 +34,9 @@ void MicRecorder::handle_interrupt() {
         return; 
     }
 
-    int16_t sample = (int16_t)((raw_sample - 2048) << 4);
+    int16_t sample = (int16_t)(raw_sample - 2048);
 
-    static uint32_t idx = 0;
-    static bool recordA = true;
-
+    
     if (recordA) {
         if (!recordBridge.readyA) {
             recordBridge.bufferA[idx++] = sample;

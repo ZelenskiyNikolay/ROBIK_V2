@@ -2,11 +2,16 @@
 #include <Arduino.h>
 #include "hardware/adc.h"
 #include "hardware/irq.h"
-#include "RecordBridge.h" 
+#include "RecordBridge.h"
 
-class MicRecorder {
+static uint32_t idx = 0;
+static bool recordA = true;
+
+class MicRecorder
+{
 public:
-    static MicRecorder& getInstance() {
+    static MicRecorder &getInstance()
+    {
         static MicRecorder instance;
         return instance;
     }

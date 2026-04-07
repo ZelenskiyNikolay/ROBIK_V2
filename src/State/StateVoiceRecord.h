@@ -8,7 +8,7 @@
 #include "Sound/SoundManager.h"
 #include "SoundMic/RecordBridge.h"
 #include "SoundMic/WAVRecorder.h"
-#include "SoundMic/SDStreamWrite.h" 
+#include "SoundMic/SDStreamWrite.h"
 
 #define DISPLAY_UP_TIME 500
 
@@ -21,10 +21,13 @@ public:
     void update(float dt) override;
     void Draw(float dt);
 
+    void Draw_MAE(float dt);
+
 private:
     float timer;
     float RecTime = 10000;
     bool IsRecording = false;
+    bool draw_MAE = false;
     void IrLogic();
 
     DisplayOled *display;
