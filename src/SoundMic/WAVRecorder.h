@@ -12,7 +12,7 @@ public:
 
     uint16_t MAE[MAE_BUF_SIZE];
 
-    bool IS_MAE_READY(){return MAE_redy;}
+    bool IS_MAE_READY() { return MAE_redy; }
 
     bool start(const char *filename, uint32_t sampleRate = 16000)
     {
@@ -35,8 +35,9 @@ public:
     {
         if (recordBridge.readyA)
         {
+            processBuffer(recordBridge.bufferA, RecordBridge::BUF_SIZE); // Обработка постпроцесинг
             Count_MAE(recordBridge.bufferA, RecordBridge::BUF_SIZE);
-            // processBuffer(recordBridge.bufferA, RecordBridge::BUF_SIZE); // Обработка постпроцесинг
+
             _stream.write(recordBridge.bufferA, RecordBridge::BUF_SIZE * 2);
             _sampleCount += RecordBridge::BUF_SIZE;
             recordBridge.readyA = false;
@@ -44,8 +45,9 @@ public:
 
         if (recordBridge.readyB)
         {
+            processBuffer(recordBridge.bufferB, RecordBridge::BUF_SIZE); // Обработка постпроцесинг
             Count_MAE(recordBridge.bufferB, RecordBridge::BUF_SIZE);
-            // processBuffer(recordBridge.bufferB, RecordBridge::BUF_SIZE); // Обработка постпроцесинг
+
             _stream.write(recordBridge.bufferB, RecordBridge::BUF_SIZE * 2);
             _sampleCount += RecordBridge::BUF_SIZE;
             recordBridge.readyB = false;
@@ -60,36 +62,35 @@ public:
         for (size_t i = 0; i < size; i++)
         {
             values += abs(buffer[i]);
-            samples_count ++;
+            samples_count++;
         }
-        MAE[MAE_count] = (uint16_t)(values/samples_count);
+        MAE[MAE_count] = (uint16_t)(values / samples_count);
         MAE_count++;
     }
     void processBuffer(int16_t *buffer, size_t size)
     {
         for (size_t i = 0; i < size; i++)
         {
-            // Теперь здесь честное знаковое число
             int32_t sample = buffer[i];
+            // Вырезаем шум
+            if (abs(sample) < _threshold)
+            {
+                sample = sample >> 2; // Зануляем шум /4
+            }
+            else
+            {
+                sample = sample << 2; //*4
+            }
 
-            sample = sample * 8;
+            if (sample > 32767)
+                sample = 32767;
+            if (sample < -32768)
+                sample = -32768;
+            buffer[i] = (int16_t)sample;
 
-            // Убираем остаточную постоянку
-            _dcAvg += (sample - _dcAvg) >> 6;
-            sample -= _dcAvg;
-
-            // Срезаем ВЧ-шум ("шерсть" с графика)
-            _filtered += (sample - _filtered) >> 1;
-
-            // Усиление
-            _filtered = _filtered * 8;
-            // Ограничиваем, чтобы не "хрустело"
-            if (_filtered > 32767)
-                _filtered = 32767;
-            if (_filtered < -32768)
-                _filtered = -32768;
-
-            buffer[i] = (int16_t)_filtered;
+            // int32_t sample = buffer[i];
+            //     sample = sample * 4;
+            // buffer[i] = (int16_t)sample;
         }
     }
 
@@ -116,8 +117,10 @@ private:
     uint32_t _sampleRate = 16000;
     const char *_currentPath;
 
-    int32_t _dcAvg = 0;
-    int32_t _filtered = 0;
+    // int32_t _dcAvg = 0;
+    // int32_t _filtered = 0;
+
+    int16_t _threshold = 200;
 
     bool MAE_redy = false;
     uint16_t MAE_count = 0;

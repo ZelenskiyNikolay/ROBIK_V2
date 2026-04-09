@@ -29,6 +29,7 @@ void setup()
       ;
   }
   display.clearDisplay();
+  display.display();
 
   fsm = new FSM(new StateStart(displaySys), &displaySys);
 

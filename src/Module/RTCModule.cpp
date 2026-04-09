@@ -31,7 +31,7 @@ void RTCModule::begin()
     Serial.print("Текущее время: ");
     Serial.println(currentTime.timestamp());
     lastUpdate = millis();
-    //Установка часов
+    // Установка часов
     // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 }
 
