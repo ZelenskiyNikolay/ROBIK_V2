@@ -7,19 +7,23 @@ StateNormal::StateNormal(DisplayOled &disp)
 
 void StateNormal::enter()
 {
-  display->clear();
-  timer = 0;
-  isDrawingBattery = true;
-  //sound.SoundStop();
+    display->clear();
+    timer = 0;
+    isDrawingBattery = true;
+
+    VoiceControl::getInstance().begin();
 }
 void StateNormal::update(float dt)
 {
-  IrLogic();
-  Draw(dt);
-  
+    IrLogic();
+    Draw(dt);
+    VoiceControl::getInstance().Update();
 }
 
-bool HiSpeed= true;
+
+uint8_t temp[SAMPLE_COUNT];
+
+bool HiSpeed = true;
 void StateNormal::IrLogic()
 {
     ButtonIR tmp = IRSensor::getInstance().GetSensorState();
@@ -37,7 +41,7 @@ void StateNormal::IrLogic()
     case ButtonHash:
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});
         break;
-    
+
     case Button4:
         MovementModule::getInstance().NewMov(MotionState::TURN_LEFT);
         break;
@@ -51,16 +55,39 @@ void StateNormal::IrLogic()
         break;
 
     case ButtonUp:
-        MovementModule::getInstance().NewMov(MotionState::FORWARD,0.5f,0.5f);
+        MovementModule::getInstance().NewMov(MotionState::FORWARD, 0.5f, 0.5f);
         break;
     case ButtonDown:
-        MovementModule::getInstance().NewMov(MotionState::BACKWARD,0.5f,0.5f);
+        MovementModule::getInstance().NewMov(MotionState::BACKWARD, 0.5f, 0.5f);
         break;
     case ButtonLeft:
         MovementModule::getInstance().NewMov(MotionState::TURN_LEFT90);
         break;
     case ButtonRight:
         MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
+        break;
+
+    case ButtonOk:
+        VoiceControl::getInstance().Record_Comand();
+        break;
+    case ButtonStar:
+        draw_MAE = !draw_MAE;
+        if (draw_MAE)
+        {
+            Serial.print("MAE: ");
+            for (int i = 0; i < MAE_BUF_SIZE; i++)
+            {
+                Serial.print(VoiceControl::getInstance().MAE[i]);
+                Serial.print(", ");
+            }
+            Serial.println("... END MAE");
+
+            for (int i = 0; i < SAMPLE_COUNT; i++)
+            {
+                temp[i] = static_cast<uint8_t>((VoiceControl::getInstance().sample_buffer[i] + 32768) >> 8);
+            }
+            SoundManager::getInstance().Play(temp, SAMPLE_COUNT);
+        }
         break;
 
     default:
@@ -70,27 +97,26 @@ void StateNormal::IrLogic()
 
 void StateNormal::Draw(float dt)
 {
-  timer -= dt;
-  if (IsOpen)
-  {
-    if (timer < 0)
+    timer -= dt;
+    if (IsOpen)
     {
-      IsOpen = false;
-      timer = Close_Eyes;
-      sprite.Draw(Emotions::BLINK);
-      return;
+        if (timer < 0)
+        {
+            IsOpen = false;
+            timer = Close_Eyes;
+            sprite.Draw(Emotions::BLINK);
+            return;
+        }
     }
-  }
-  else
-  {
-    if (timer < 0)
+    else
     {
-      IsOpen = true;
-      timer = Open_Eyes;
+        if (timer < 0)
+        {
+            IsOpen = true;
+            timer = Open_Eyes;
 
-      sprite.Draw(Emotions::NORMAL);
-      return;
+            sprite.Draw(Emotions::NORMAL);
+            return;
+        }
     }
-  }
 }
-

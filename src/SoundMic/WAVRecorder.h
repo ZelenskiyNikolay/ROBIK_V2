@@ -87,10 +87,6 @@ public:
             if (sample < -32768)
                 sample = -32768;
             buffer[i] = (int16_t)sample;
-
-            // int32_t sample = buffer[i];
-            //     sample = sample * 4;
-            // buffer[i] = (int16_t)sample;
         }
     }
 

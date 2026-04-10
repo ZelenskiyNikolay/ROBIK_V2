@@ -11,7 +11,7 @@ public:
         static SoundManager instance;
         return instance;
     }
-    void Play(const uint8_t *data, uint32_t size);
+    void Play(const uint8_t *data, uint32_t size,bool header = false);
     void Play(const char* filename);
     void update(); // Вызывать в основном loop() на Core 0
     void Stop();

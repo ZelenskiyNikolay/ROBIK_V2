@@ -7,6 +7,7 @@
 #include "Core/FSM.h"
 #include "Sensors/IRSensor.h"
 #include "Sound/SoundManager.h"
+#include "SoundMic/VoiceControl.h"
 //#include <RTClib.h>
 // #include "Module/RTCModule.h"
 // #include "Settings/GlobalSettings.h"
@@ -59,4 +60,6 @@ private:
     // Sound sound;
     float blinkTimer = 3000;
     bool dance = true;
+    
+    bool draw_MAE = false;
 };

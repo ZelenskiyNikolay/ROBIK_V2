@@ -102,8 +102,8 @@ void StateVoiceRecord::IrLogic()
         IsRecording = true;
         timer = 0;
 
-        char filename[32];
-        snprintf(filename, sizeof(filename), "/rec%lu.wav", millis());
+        char filename[64];
+        snprintf(filename, sizeof(filename), "Dataset/Background/background%lu.wav", millis());
 
         // 1. Сначала подготавливаем файл
         if (recorder.start(filename, 16000))
@@ -151,6 +151,13 @@ void StateVoiceRecord::IrLogic()
 
     case ButtonHash:
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});
+        break;
+
+    case ButtonLeft:
+        MovementModule::getInstance().NewMov(MotionState::TURN_LEFT,0.3f);
+        break;
+    case ButtonRight:
+        MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT,0.3f,0.3f);
         break;
 
     default:

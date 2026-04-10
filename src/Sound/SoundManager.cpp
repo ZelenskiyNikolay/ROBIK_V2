@@ -64,13 +64,15 @@ void SoundManager::Play(const char *filename)
         Serial.println(filename);
     }
 }
-
-void SoundManager::Play(const uint8_t *data, uint32_t size)
+void SoundManager::Play(const uint8_t *data, uint32_t size, bool header)
 {
     _isSD = false;
     _source = data;
     _totalSize = size;
-    _cursor = HEADER_SIZE;
+    if (header)
+        _cursor = HEADER_SIZE;
+    else 
+        _cursor= 0;
 
     audioBridge.isPlaying = false; // На всякий случай стопаем
 
