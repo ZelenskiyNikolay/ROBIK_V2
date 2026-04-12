@@ -63,4 +63,5 @@ private:
     bool dance = true;
     
     bool draw_MAE = false;
+    bool microphone = false;
 };

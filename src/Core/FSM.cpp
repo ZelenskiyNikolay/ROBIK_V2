@@ -51,6 +51,7 @@ void FSM::changeStateById(StateID id)
     case STATE_START:      next = new StateStart(*display);      break;
     case STATE_USB:      next = new StateUsb(*display);      break;
     case STATE_VOICE_RECORD:      next = new StateVoiceRecord(*display);      break;
+    case STATE_CLOCK:      next = new StateClock(*display);      break;
     // case STATE_SLEEPY:      next = new StateSleepy(*display);      break;
     // case STATE_CLOCK:       next = new StateClock(*display);       break;
     //case STATE_SEARCH_BASE: next = new StateSearchBase(*display); break;

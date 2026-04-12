@@ -15,7 +15,8 @@ enum Emotions
     BLINK,
     SHOW_TIME,
     SOOS,
-    EYE_STATE_COUNT
+    EYE_STATE_COUNT,
+    MICROPHONE,
 };
 
 class SpriteOled
@@ -38,4 +39,5 @@ private:
     void drawEyes_Blink();
     void drawEyes_Time();
     void displayTimeOn5110();
+    void drawMicrophone();
 };

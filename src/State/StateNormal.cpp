@@ -20,6 +20,8 @@ bool New_Comand = false;
 
 void StateNormal::update(float dt)
 {
+    if (VoiceControl::getInstance().Is_New_Comand)
+        microphone = false;
     IrLogic();
     Draw(dt);
     VoiceControl::getInstance().Update();
@@ -32,6 +34,11 @@ void StateNormal::update(float dt)
             snprintf(filename, sizeof(filename), "Sound/Hello/hello%lu.wav", random(1, 6));
 
             SoundManager::getInstance().Play(filename);
+        }
+        else if (VoiceComand == TIME)
+        {
+            New_Comand = false;
+            EventBus::push({EVENT_CHANGE_STATE, STATE_CLOCK});
         }
         New_Comand = false;
     }
@@ -102,6 +109,8 @@ void StateNormal::IrLogic()
         break;
 
     case ButtonOk:
+        timer = 0;
+        microphone = true;
         VoiceControl::getInstance().Record_Comand();
         break;
     case ButtonStar:
@@ -121,7 +130,7 @@ void StateNormal::IrLogic()
                 temp[i] = static_cast<uint8_t>((VoiceControl::getInstance().sample_buffer[i] + 32768) >> 8);
             }
             SoundManager::getInstance().Play(temp, SAMPLE_COUNT);
-            memset(VoiceControl::getInstance().MAE,0,sizeof(VoiceControl::getInstance().MAE));
+            memset(VoiceControl::getInstance().MAE, 0, sizeof(VoiceControl::getInstance().MAE));
         }
         break;
 
@@ -133,25 +142,29 @@ void StateNormal::IrLogic()
 void StateNormal::Draw(float dt)
 {
     timer -= dt;
+    if (timer > 0)
+        return;
+
+    if (microphone)
+    {
+        timer = 100;
+        sprite.Draw(Emotions::MICROPHONE);
+        return;
+    }
+
     if (IsOpen)
     {
-        if (timer < 0)
-        {
-            IsOpen = false;
-            timer = Close_Eyes;
-            sprite.Draw(Emotions::BLINK);
-            return;
-        }
+        IsOpen = false;
+        timer = Close_Eyes;
+        sprite.Draw(Emotions::BLINK);
+        return;
     }
     else
     {
-        if (timer < 0)
-        {
-            IsOpen = true;
-            timer = Open_Eyes;
+        IsOpen = true;
+        timer = Open_Eyes;
 
-            sprite.Draw(Emotions::NORMAL);
-            return;
-        }
+        sprite.Draw(Emotions::NORMAL);
+        return;
     }
 }

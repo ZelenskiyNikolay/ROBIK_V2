@@ -18,17 +18,14 @@ void SpriteOled ::Draw(Emotions emotions)
 
     case SURPRISED:
 
-       
         break;
 
     case HAPPY:
 
-        
         break;
 
     case SAD:
 
-        
         break;
 
     case LEFT_LOOK:
@@ -46,10 +43,47 @@ void SpriteOled ::Draw(Emotions emotions)
     case SHOW_TIME:
 
         break;
-       
+    case MICROPHONE:
+        drawMicrophone();
+        break;
     default:
         break;
     }
+}
+
+void SpriteOled::drawMicrophone()
+{
+    display->clear();
+
+    int centerX = 64;   // Центр экрана по горизонтали
+    int topY = 10;      // Верхняя точка микрофона
+    int micWidth = 16;  // Ширина капсулы
+    int micHeight = 26; // Высота капсулы
+
+    display->drawCircle(centerX, topY + micWidth / 2, micWidth / 2, SSD1306_WHITE);
+
+    display->drawCircle(centerX, topY + micHeight - micWidth / 2, micWidth / 2, SSD1306_WHITE);
+
+    display->fillRect(centerX - micWidth / 2, topY + micWidth / 2, micWidth, micHeight - micWidth, SSD1306_WHITE);
+
+    int gap = 4;                                        // Промежуток между линиями
+    int gridStartY = topY + micWidth / 2 + 1;           // Начало сетки чуть ниже верха
+    int gridEndY = topY + micHeight - micWidth / 2 - 1; // Конец чуть выше низа
+
+    for (int y = gridStartY; y < gridEndY; y += gap)
+    {
+        display->drawLine(centerX - micWidth / 4, gridStartY, centerX - micWidth / 4, gridEndY, SSD1306_BLACK);
+        display->drawLine(centerX + micWidth / 4, gridStartY, centerX + micWidth / 4, gridEndY, SSD1306_BLACK);
+    }
+    int stemWidth = 4;
+    int stemHeight = 12;
+    int stemTopY = topY + micHeight + 2; // Чуть ниже капсулы
+    display->fillRect(centerX - stemWidth / 2, stemTopY, stemWidth, stemHeight, SSD1306_WHITE);
+
+    int baseWidth = 32;
+    int baseBottomY = 60; // Почти у нижнего края экрана
+
+    display->fillRect(centerX - baseWidth / 2, baseBottomY, baseWidth, 3, SSD1306_WHITE);
 }
 void SpriteOled::drawEyes_Normal()
 {
@@ -86,8 +120,8 @@ void SpriteOled::drawEyes_Angry()
 
     display->drawLine(20, 2, 50, 6, SSD1306_WHITE);
     display->drawLine(20, 3, 50, 7, SSD1306_WHITE);
-    display->drawLine(78, 6,108, 2,SSD1306_WHITE);
-    display->drawLine(78, 7,108, 3,SSD1306_WHITE);
+    display->drawLine(78, 6, 108, 2, SSD1306_WHITE);
+    display->drawLine(78, 7, 108, 3, SSD1306_WHITE);
 
     // Зрачки (сначала)
     display->fillCircle(35, 20, 9, SSD1306_WHITE);
