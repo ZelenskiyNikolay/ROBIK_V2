@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "AudioBridge.h"
 #include "SDStream.h"
+#include "Module/SDModule.h"
 
 class SoundManager
 {
@@ -13,6 +14,7 @@ public:
     }
     void Play(const uint8_t *data, uint32_t size,bool header = false);
     void Play(const char* filename);
+    void Random_Play(const char* dirname);
     void update(); // Вызывать в основном loop() на Core 0
     void Stop();
     void Init();

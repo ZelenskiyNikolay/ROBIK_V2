@@ -71,8 +71,8 @@ void SoundManager::Play(const uint8_t *data, uint32_t size, bool header)
     _totalSize = size;
     if (header)
         _cursor = HEADER_SIZE;
-    else 
-        _cursor= 0;
+    else
+        _cursor = 0;
 
     audioBridge.isPlaying = false; // На всякий случай стопаем
 
@@ -163,4 +163,23 @@ void SoundManager::Stop()
     audioBridge.readyA = false;
     audioBridge.readyB = false;
     digitalWrite(_en_pin, HIGH); // Гасим усилитель
+}
+
+void SoundManager::Random_Play(const char *dirname)
+{
+    char filename[64];
+    snprintf(filename, sizeof(filename), "Sound/%s/config", dirname);
+
+    Serial.print("Собран путь: ");
+    Serial.println(filename);
+    int var = SDModule::getInstance().ReadValFromFile(filename);
+    if (var > 0)
+    {
+        Serial.print("Прочитано var: ");
+        Serial.println(var);
+        snprintf(filename, sizeof(filename), "Sound/%s/hello%d.wav", dirname, random(1, var + 1));
+        Play(filename);
+        Serial.print("Играем файл: ");
+        Serial.println(filename);
+    }
 }

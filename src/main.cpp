@@ -23,6 +23,8 @@ void setup()
   SPI.begin();
   delay(200); // дать питанию и SPI стабилизироваться
 
+  randomSeed(analogRead(A3));
+
   if (!display.begin(SSD1306_SWITCHCAPVCC))
   {
     while (true)

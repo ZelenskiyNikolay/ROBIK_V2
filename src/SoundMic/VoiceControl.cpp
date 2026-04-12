@@ -24,8 +24,9 @@ VoiceCmd VoiceControl::Get_Voice_Comand()
         return VoiceCmd::UNKNOWN;
 
     VoiceCmd temp = lastCommand;
-    lastCommand = NONE;
+    lastCommand = NONE_VOICE;
     Is_New_Comand = false;
+    MAE_count = 0;
     return temp;
 }
 void VoiceControl::Count_MAE(int16_t *buffer, size_t size)
@@ -44,6 +45,10 @@ void VoiceControl::Count_MAE(int16_t *buffer, size_t size)
 
 void VoiceControl::Record_Comand()
 {
+    if (_wasRecording || Is_New_Comand)
+        return;
+    _wasRecording = true;
+    writePoint = 0;
     Serial.println("Start record Comand ");
     // 2. Сбрасываем мост
     recordBridge.readyA = false;
@@ -53,8 +58,6 @@ void VoiceControl::Record_Comand()
     // 3. Задаем лимит и пускаем Ядро 1
     recordBridge.targetSamples = 16000; // Запуск записина 1 сек
     recordBridge.isRecord = true;
-    writePoint = 0;
-    _wasRecording = true;
 }
 void VoiceControl::Update()
 {
@@ -82,6 +85,7 @@ void VoiceControl::Update()
         {
             _wasRecording = false;
             Comand_Ready = true;
+            Stop();
         }
     }
     if (Comand_Ready)
@@ -124,7 +128,7 @@ void VoiceControl::Update()
                 {
                 case 0: // background
                 case 4: // silence
-                    lastCommand = NONE;
+                    lastCommand = NONE_VOICE;
                     break;
                 case 1: // hello
                     lastCommand = HELLO;
@@ -193,4 +197,11 @@ void VoiceControl::processBuffer(int16_t *buffer)
             sample = -32768;
         buffer[i] = (int16_t)sample;
     }
+}
+
+void VoiceControl::Stop()
+{
+    recordBridge.isRecord = false;
+    recordBridge.readyA = false;
+    recordBridge.readyB = false;
 }

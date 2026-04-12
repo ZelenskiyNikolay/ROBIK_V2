@@ -6,8 +6,9 @@
 #define SAMPLE_COUNT 16000 // 1 секунда при 16кГц
 #define MAE_BUF_SIZE 80
 
-enum VoiceCmd {
-    NONE = 0,
+enum VoiceCmd
+{
+    NONE_VOICE = 0,
     HELLO,
     HOME,
     QUIET,
@@ -31,15 +32,16 @@ public:
     void Update();
     VoiceCmd Get_Voice_Comand();
     bool Is_New_Comand = false;
-    
 
     int16_t sample_buffer[SAMPLE_COUNT];
     uint16_t MAE[MAE_BUF_SIZE];
+
 private:
     VoiceControl();
     void colect(int16_t *buffer);
     void processBuffer(int16_t *buffer);
     void Count_MAE(int16_t *buffer, size_t size);
+    void Stop();
 
     bool _wasRecording = false;
     bool Comand_Ready = false;
@@ -49,5 +51,5 @@ private:
     bool MAE_redy = false;
     uint16_t MAE_count = 0;
 
-    VoiceCmd lastCommand = NONE;
+    VoiceCmd lastCommand = NONE_VOICE;
 };

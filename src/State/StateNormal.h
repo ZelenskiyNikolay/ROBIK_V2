@@ -21,8 +21,8 @@ public:
 
     void enter() override;
     void update(float dt) override;
-    // StateCommand handleEvent(Event e) override;
     void Draw(float dt);
+    
 
 private:
     const float Open_Eyes = 10000;
@@ -31,6 +31,7 @@ private:
     float timer;
     bool DRAWBAT = false;
 
+    void StateLogic(float dt);
 
     void DrawClock(float dt);
     bool Clock = false;

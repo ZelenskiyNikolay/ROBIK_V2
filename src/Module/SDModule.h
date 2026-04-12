@@ -17,6 +17,8 @@ public:
      bool begin();
      void ListFiles();
 
+    int ReadValFromFile(const char *file_name);
+
     void  CreateFile(const char* file_name);
     SdFat* getCard() { return &sd; }
 private:

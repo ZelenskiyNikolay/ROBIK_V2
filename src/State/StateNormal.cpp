@@ -13,13 +13,43 @@ void StateNormal::enter()
 
     VoiceControl::getInstance().begin();
 }
+#define UP_TIME 1000
+float logic_timer = 0;
+VoiceCmd VoiceComand;
+bool New_Comand = false;
+
 void StateNormal::update(float dt)
 {
     IrLogic();
     Draw(dt);
     VoiceControl::getInstance().Update();
+    StateLogic(dt);
+    if (New_Comand)
+    {
+        if (VoiceComand == HELLO)
+        {
+            char filename[64];
+            snprintf(filename, sizeof(filename), "Sound/Hello/hello%lu.wav", random(1, 6));
+
+            SoundManager::getInstance().Play(filename);
+        }
+        New_Comand = false;
+    }
 }
 
+void StateNormal::StateLogic(float dt)
+{
+    logic_timer -= dt;
+    if (logic_timer < 0)
+    {
+        logic_timer = UP_TIME;
+        if (VoiceControl::getInstance().Is_New_Comand)
+        {
+            VoiceComand = VoiceControl::getInstance().Get_Voice_Comand();
+            New_Comand = true;
+        }
+    }
+}
 
 uint8_t temp[SAMPLE_COUNT];
 
@@ -47,6 +77,10 @@ void StateNormal::IrLogic()
         break;
     case Button6:
         MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT);
+        break;
+
+    case Button5:
+        SoundManager::getInstance().Random_Play("Hello");
         break;
 
     case Button0:
@@ -87,6 +121,7 @@ void StateNormal::IrLogic()
                 temp[i] = static_cast<uint8_t>((VoiceControl::getInstance().sample_buffer[i] + 32768) >> 8);
             }
             SoundManager::getInstance().Play(temp, SAMPLE_COUNT);
+            memset(VoiceControl::getInstance().MAE,0,sizeof(VoiceControl::getInstance().MAE));
         }
         break;
 

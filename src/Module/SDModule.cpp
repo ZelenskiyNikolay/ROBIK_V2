@@ -16,16 +16,19 @@ bool SDModule::begin()
     }
 }
 
-void SDModule::ListFiles() {
+void SDModule::ListFiles()
+{
     File32 root;
     File32 file;
 
-    if (!root.open("/")) {
+    if (!root.open("/"))
+    {
         Serial.println("Root open fail");
         return;
     }
 
-    while (file.openNext(&root, O_RDONLY)) {
+    while (file.openNext(&root, O_RDONLY))
+    {
         char name[64];
         file.getName(name, sizeof(name));
 
@@ -37,6 +40,30 @@ void SDModule::ListFiles() {
     }
 
     root.close();
+}
+
+int SDModule::ReadValFromFile(const char *file_name)
+{
+    File32 file;
+    if (!file.open(file_name, O_RDONLY))
+    {
+        Serial.print("Ошибка: файл ");
+        Serial.print(file_name);
+        Serial.println(" не найден!");
+        return -1;
+    }
+
+    char buf[8];
+    memset(buf, 0, sizeof(buf));
+    int err = file.read(buf, sizeof(buf) - 1);
+    file.close();
+
+    if (err > 0)
+    {
+        int count = atoi(buf);
+        return count;
+    }
+    return -1;
 }
 
 void SDModule::CreateFile(const char *file_name)

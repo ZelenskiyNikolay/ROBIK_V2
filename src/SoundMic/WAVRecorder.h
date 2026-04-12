@@ -113,9 +113,6 @@ private:
     uint32_t _sampleRate = 16000;
     const char *_currentPath;
 
-    // int32_t _dcAvg = 0;
-    // int32_t _filtered = 0;
-
     int16_t _threshold = 200;
 
     bool MAE_redy = false;
