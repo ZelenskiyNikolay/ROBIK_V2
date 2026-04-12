@@ -6,6 +6,17 @@
 #define SAMPLE_COUNT 16000 // 1 секунда при 16кГц
 #define MAE_BUF_SIZE 80
 
+enum VoiceCmd {
+    NONE = 0,
+    HELLO,
+    HOME,
+    QUIET,
+    SILENCE,
+    TIME,
+    WAKE_UP,
+    UNKNOWN = 255
+};
+
 class VoiceControl
 {
 public:
@@ -18,6 +29,9 @@ public:
     void begin();
     void Record_Comand();
     void Update();
+    VoiceCmd Get_Voice_Comand();
+    bool Is_New_Comand = false;
+    
 
     int16_t sample_buffer[SAMPLE_COUNT];
     uint16_t MAE[MAE_BUF_SIZE];
@@ -34,4 +48,6 @@ private:
 
     bool MAE_redy = false;
     uint16_t MAE_count = 0;
+
+    VoiceCmd lastCommand = NONE;
 };
