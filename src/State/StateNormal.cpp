@@ -40,6 +40,8 @@ void StateNormal::update(float dt)
             New_Comand = false;
             EventBus::push({EVENT_CHANGE_STATE, STATE_CLOCK});
         }
+        
+        microphone = false;
         New_Comand = false;
     }
 }

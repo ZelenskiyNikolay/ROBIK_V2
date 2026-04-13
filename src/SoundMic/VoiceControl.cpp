@@ -154,7 +154,7 @@ void VoiceControl::Update()
             else
             {
                 lastCommand = UNKNOWN;
-                Is_New_Comand = false;
+                Is_New_Comand = true;
                 Serial.println("Команда не распознана (низкая уверенность)");
             }
         }
