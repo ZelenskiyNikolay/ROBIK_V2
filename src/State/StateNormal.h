@@ -3,16 +3,11 @@
 #include "Core/State.h"
 #include "Display/DisplayOled.h"
 #include "Display/SpriteOled.h"
-// #include "Sound/SoundManager.h"
 #include "Core/FSM.h"
 #include "Sensors/IRSensor.h"
 #include "Sound/SoundManager.h"
 #include "SoundMic/VoiceControl.h"
-//#include <RTClib.h>
-// #include "Module/RTCModule.h"
-// #include "Settings/GlobalSettings.h"
-// #include "Module/BatteryModule.h"
-// #include "Sensors/TouchButtons.h"
+#include "AIBehavior/IdelManager.h"
 
 class StateNormal : public State
 {

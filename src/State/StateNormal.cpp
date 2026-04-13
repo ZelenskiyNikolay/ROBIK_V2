@@ -12,6 +12,7 @@ void StateNormal::enter()
     isDrawingBattery = true;
 
     VoiceControl::getInstance().begin();
+    IdelManager::getInstance().begin();
 }
 #define UP_TIME 1000
 float logic_timer = 0;
@@ -20,6 +21,7 @@ bool New_Comand = false;
 
 void StateNormal::update(float dt)
 {
+    IdelManager::getInstance().Update(dt);
     if (VoiceControl::getInstance().Is_New_Comand)
         microphone = false;
     IrLogic();
@@ -40,7 +42,7 @@ void StateNormal::update(float dt)
             New_Comand = false;
             EventBus::push({EVENT_CHANGE_STATE, STATE_CLOCK});
         }
-        
+
         microphone = false;
         New_Comand = false;
     }
