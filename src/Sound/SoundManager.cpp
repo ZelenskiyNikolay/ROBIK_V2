@@ -177,7 +177,7 @@ void SoundManager::Random_Play(const char *dirname)
     {
         Serial.print("Прочитано var: ");
         Serial.println(var);
-        snprintf(filename, sizeof(filename), "Sound/%s/hello%d.wav", dirname, random(1, var + 1));
+        snprintf(filename, sizeof(filename), "Sound/%s/var%d.wav", dirname, random(1, var + 1));
         Play(filename);
         Serial.print("Играем файл: ");
         Serial.println(filename);

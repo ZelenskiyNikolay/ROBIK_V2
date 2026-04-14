@@ -22,6 +22,7 @@ bool New_Comand = false;
 void StateNormal::update(float dt)
 {
     IdelManager::getInstance().Update(dt);
+    MovementModule::getInstance().update(dt);
     if (VoiceControl::getInstance().Is_New_Comand)
         microphone = false;
     IrLogic();
@@ -33,7 +34,7 @@ void StateNormal::update(float dt)
         if (VoiceComand == HELLO)
         {
             char filename[64];
-            snprintf(filename, sizeof(filename), "Sound/Hello/hello%lu.wav", random(1, 6));
+            snprintf(filename, sizeof(filename), "Sound/Hello/var%lu.wav", random(1, 6));
 
             SoundManager::getInstance().Play(filename);
         }

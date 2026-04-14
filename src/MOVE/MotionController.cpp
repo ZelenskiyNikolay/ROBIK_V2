@@ -61,12 +61,12 @@ void MotionController::NewMov(MotionState Command, float Left, float Right)
         command.type = Command;
         break;
     }
-    Serial.print("Move type: ");
-    Serial.print(command.type);
-    Serial.print(" ||  targetLeft: ");
-    Serial.print(command.targetLeft);
-    Serial.print(" targetRight: ");
-    Serial.println(command.targetRight);
+    // Serial.print("Move type: ");
+    // Serial.print(command.type);
+    // Serial.print(" ||  targetLeft: ");
+    // Serial.print(command.targetLeft);
+    // Serial.print(" targetRight: ");
+    // Serial.println(command.targetRight);
 }
 
 int MotionController::update(float dt)
