@@ -1,6 +1,8 @@
 #include "VoiceControl.h"
+
 #include "edge-impulse-sdk/classifier/ei_run_classifier.h"
 #include "model-parameters/model_metadata.h"
+
 
 VoiceControl::VoiceControl() {}
 
