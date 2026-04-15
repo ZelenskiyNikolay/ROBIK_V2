@@ -34,7 +34,7 @@ public:
     void begin(int pin);
     void update();
     ButtonIR GetSensorState();
-
+    bool IsAnyKey();
 private:
     IRSensor();
     int SensorPin;

@@ -86,6 +86,7 @@ void IRSensor::update()
             lastState = ButtonIR::ButtonHash;
             break;
         default:
+            lastState = ButtonIR::NOOL;
             Serial.print("ИК код: 0х");
             Serial.println(cmd, HEX);
             break;
@@ -93,6 +94,10 @@ void IRSensor::update()
         }
         IrReceiver.resume();
     }
+}
+bool IRSensor::IsAnyKey() {
+    // Если в буфере декодера что-то есть — значит, сигнал был
+    return IrReceiver.decode(); 
 }
 ButtonIR IRSensor::GetSensorState()
 {

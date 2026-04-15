@@ -38,4 +38,5 @@ public:
     bool isBusy() const;
     void NewMov(MotionState Command, float Left = 0, float Right = 0);
     void MoveSpeed(bool HiSpeed = true);
+    void Stop();
 };

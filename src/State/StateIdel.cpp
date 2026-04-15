@@ -1,29 +1,59 @@
-#include "IdelManager.h"
+#include "StateIdel.h"
 
-IdelManager::IdelManager() {}
+StateIdel::StateIdel(DisplayOled &disp)
+    : display(&disp), sprite(&disp) {}
 
-void IdelManager::begin()
+void StateIdel::enter()
 {
     timer1 = TIMER_MOV;
     timer2 = TIMER_SPEAK;
 }
 
-void IdelManager::Update(float dt)
+void StateIdel::update(float dt)
 {
-    if (MovementModule::getInstance().isBusy())
+    if (Activ)
     {
-        timer1 = TIMER_MOV;
-        return;
-    }
-    if (SoundManager::getInstance().Is_Playing())
-    {
-        timer2 = TIMER_SPEAK;
-        return;
+        Serial.println("Произошел сброс очереди!!!");
+        MovementModule::getInstance().ResetQueue();
+        EventBus::push({EVENT_CHANGE_STATE, STATE_NORMAL});
     }
 
     timer1 -= dt;
     timer2 -= dt;
 
+    MovementModule::getInstance().update(dt);
+    IrLogic();
+    AddQueue();
+    Draw(dt);
+}
+void StateIdel::IrLogic()
+{
+    Activ = IRSensor::getInstance().IsAnyKey();
+}
+void StateIdel::Draw(float dt)
+{
+    timer -= dt;
+    if (timer > 0)
+        return;
+
+    if (IsOpen)
+    {
+        IsOpen = false;
+        timer = Close_Eyes;
+        sprite.Draw(Emotions::BLINK);
+        return;
+    }
+    else
+    {
+        IsOpen = true;
+        timer = Open_Eyes;
+
+        sprite.Draw(Emotions::NORMAL);
+        return;
+    }
+}
+void StateIdel::AddQueue()
+{
     if (timer1 < 0)
     {
         Serial.println("Событие IDEL MOV произошло !!!");
@@ -38,7 +68,6 @@ void IdelManager::Update(float dt)
         {
             int action = random(0, 6);
             float tmp;
-            idelMov = true;
             int val;
             switch (action)
             {
@@ -49,7 +78,7 @@ void IdelManager::Update(float dt)
                 MovementModule::getInstance().AddMovQueue(MotionState::FORWARD, tmp, tmp);
                 break;
             case 1: // b
-                tmp = RND_DIST();
+                tmp = RND_DIST() / 4;
                 Serial.print("Движение назад на оборота: ");
                 Serial.println(tmp);
                 MovementModule::getInstance().AddMovQueue(MotionState::BACKWARD, tmp, tmp);
@@ -79,7 +108,7 @@ void IdelManager::Update(float dt)
                     Serial.println("Меняем скорость движения -> Быстро ");
                 }
                 break;
-            case 5:      // PAUSE
+            case 5:                      // PAUSE
                 val = random(500, 1000); // Пауза от 0.5 до 3 сек
                 MovementModule::getInstance().AddMovQueue(MotionState::WEIT, val);
                 Serial.printf("Добавляем паузу в очередь: %.3f сек\n", val / 1000.0);
@@ -100,16 +129,4 @@ void IdelManager::Update(float dt)
         return;
     }
 }
-bool IdelManager::IsIdel()
-{
-    // if(idelMov)
-    //     if (!MovementModule::getInstance().isBusy())
-    //         idelMov = false;
-    // if (!idelMov)
-    //     if (MovementModule::getInstance().isBusy())
-    //         return false;
-    // if (SoundManager::getInstance().Is_Playing())
-    //         return false;
-    return true;
-}
-float IdelManager::RND_DIST() { return (random(10, 101) / 100.0f); }
+float StateIdel::RND_DIST() { return (random(10, 101) / 100.0f); }

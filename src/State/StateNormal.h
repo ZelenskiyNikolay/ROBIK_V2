@@ -7,8 +7,8 @@
 #include "Sensors/IRSensor.h"
 #include "Sound/SoundManager.h"
 #include "SoundMic/VoiceControl.h"
-#include "AIBehavior/IdelManager.h"
 
+#define IDEL_TIMER 120000
 class StateNormal : public State
 {
 public:
@@ -45,9 +45,7 @@ private:
 
     void LOWBat();
 
-    void DrawVolumeCount(float dt);
-    bool IsDrawVolume = false;
-    uint8_t _volume;
+    void IdelProcess(float dt);
 
     // DateTime _time;
 
@@ -59,4 +57,6 @@ private:
     
     bool draw_MAE = false;
     bool microphone = false;
+    bool externalActivity = false;
+    float idelTimer = IDEL_TIMER;
 };

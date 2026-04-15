@@ -21,6 +21,8 @@ public:
     void MoveSpeed(bool HiSpeed = true);
     void StopMov();
 
+    void ResetQueue();
+    bool IsBusyQueue();
 private:
     MovementModule();
 
@@ -30,4 +32,5 @@ private:
     float weit_timer = 0;
 
     void POPQueue();
+    bool isBusyQueue = false;
 };

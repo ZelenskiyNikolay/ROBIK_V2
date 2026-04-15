@@ -15,6 +15,7 @@ void MovementModule::NewMov(MotionState Command, float Left, float Right)
 }
 
 bool MovementModule::isBusy() { return moveBridge.IsBusy; }
+bool MovementModule::IsBusyQueue() { return isBusyQueue; }
 
 void MovementModule::MoveSpeed(bool HiSpeed)
 {
@@ -23,10 +24,11 @@ void MovementModule::MoveSpeed(bool HiSpeed)
     moveBridge.New_Command = true;
 }
 
-void StopMov()
+void MovementModule::StopMov()
 {
-    moveBridge.Command = IDLE;
-    moveBridge.New_Command = true;
+    NewMov(MotionState::IDLE);
+    // moveBridge.Command = IDLE;
+    // moveBridge.New_Command = true;
 }
 
 void MovementModule::update(float dt)
@@ -37,6 +39,11 @@ void MovementModule::update(float dt)
         if (!isBusy())
             if (bottom_queue != top_queue)
                 POPQueue();
+}
+void MovementModule::ResetQueue()
+{
+    bottom_queue = top_queue;
+    StopMov();
 }
 
 void MovementModule::AddMovQueue(MotionState Command, float Left, float Right)
@@ -69,7 +76,10 @@ void MovementModule::POPQueue()
             weit_timer = cmd.targetLeft;
         }
         else
+        {
+            isBusyQueue = true;
             NewMov(cmd.type, cmd.targetLeft, cmd.targetRight);
+        }
 
         if (bottom_queue < QUEUE_SIZE - 1)
         {
@@ -82,4 +92,6 @@ void MovementModule::POPQueue()
 
         Serial.println("Next command from queue started!");
     }
+    else
+    isBusyQueue = false;
 }

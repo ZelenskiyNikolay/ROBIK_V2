@@ -12,16 +12,24 @@ void StateNormal::enter()
     isDrawingBattery = true;
 
     VoiceControl::getInstance().begin();
-    IdelManager::getInstance().begin();
 }
 #define UP_TIME 1000
 float logic_timer = 0;
 VoiceCmd VoiceComand;
 bool New_Comand = false;
 
+void StateNormal::IdelProcess(float dt)
+{
+    if (MovementModule::getInstance().isBusy() || SoundManager::getInstance().Is_Playing())
+        idelTimer = IDEL_TIMER;
+    idelTimer -= dt;
+    if (idelTimer < 0)
+        EventBus::push({EVENT_CHANGE_STATE, STATE_IDEL});
+}
+
 void StateNormal::update(float dt)
 {
-    IdelManager::getInstance().Update(dt);
+    IdelProcess(dt);
     MovementModule::getInstance().update(dt);
     if (VoiceControl::getInstance().Is_New_Comand)
         microphone = false;
@@ -69,6 +77,7 @@ bool HiSpeed = true;
 void StateNormal::IrLogic()
 {
     ButtonIR tmp = IRSensor::getInstance().GetSensorState();
+
     switch (tmp)
     {
     case Button1:
