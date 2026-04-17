@@ -19,7 +19,8 @@ enum MenuShow
     LABEL,
     BATARY,
     BATARY_CHARGING,
-    Time
+    Time,
+    DISTANSE_TEST
 };
 
 
@@ -36,6 +37,7 @@ private:
     void SensorBat();
     void ChargeBat();
     void DrawClock(float dt);
+    void Draw_D_Test();
 
     void IrLogic();
     

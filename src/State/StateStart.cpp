@@ -21,6 +21,7 @@ void StateStart::enter()
 }
 void StateStart::update(float dt)
 {
+    MovementModule::getInstance().update(dt);
     IrLogic();
 
     Draw(dt);
@@ -61,6 +62,16 @@ void StateStart::IrLogic()
             display->nightMod(false);
         }
         break;
+    case Button0:
+        if (menu != DISTANSE_TEST)
+        {
+            menu = DISTANSE_TEST;
+        }
+        else
+        {
+            menu = LABEL;
+        }
+        break;
     case ButtonHash:
         menu = LABEL;
         break;
@@ -85,7 +96,20 @@ void StateStart::Draw(float dt)
             ChargeBat();
         else if (menu == Time)
             DrawClock(dt);
+        else if (menu == DISTANSE_TEST)
+            Draw_D_Test();
     }
+}
+
+void StateStart::Draw_D_Test()
+{
+    float dis = MovementModule::getInstance().GetDistance();
+
+    display->clear();
+    char buffer[16];
+    sprintf(buffer, "DIS:%.1f%s", dis, "CM");
+    display->drawText(buffer, 0, 20 , 2);
+    //Serial.println(buffer);
 }
 void StateStart::DrawLabel()
 {

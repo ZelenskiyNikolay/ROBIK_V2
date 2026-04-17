@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "MOVE/Motion.h"
 #include "MOVE/MovementBridge.h"
+#include "Sensors/Ultrasonic.h"
 
 #define QUEUE_SIZE 30
 
@@ -23,8 +24,12 @@ public:
 
     void ResetQueue();
     bool IsBusyQueue();
+
+    float GetDistance();
+    void TriggerUltrasonic();
 private:
     MovementModule();
+    Ultrasonic ultrasonic; //(0,1);
 
     MotionCommand _queue[QUEUE_SIZE];
     int bottom_queue = 0;

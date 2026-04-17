@@ -9,8 +9,6 @@ SafetyModule::SafetyModule()
     motion.begin();
 }
 
-void SafetyModule::TriggerUltrasonic() {}        // ultrasonic.Trigger(); }
-float SafetyModule::GetDistance() { return -1; } // return ultrasonic.getDistance(); }
 
 void SafetyModule::MoveSpeed(bool HiSpeed) { motion.MoveSpeed(HiSpeed); }
 

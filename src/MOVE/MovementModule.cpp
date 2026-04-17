@@ -2,9 +2,12 @@
 
 MovementCommand moveBridge;
 
-MovementModule::MovementModule() {}
+MovementModule::MovementModule()
+: ultrasonic(pio0,1,0) {}
 
 void MovementModule::Init() {}
+float MovementModule::GetDistance() { return ultrasonic.DistanceUltrasonic(); }
+//void MovementModule::TriggerUltrasonic(){ultrasonic.TriggerUltrasonic();}
 
 void MovementModule::NewMov(MotionState Command, float Left, float Right)
 {
@@ -33,6 +36,8 @@ void MovementModule::StopMov()
 
 void MovementModule::update(float dt)
 {
+    ultrasonic.update(dt);
+
     if (weit_timer > 0)
         weit_timer -= dt;
     if (weit_timer <= 0)

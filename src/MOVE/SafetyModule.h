@@ -2,7 +2,6 @@
 //#include "MotorModule.h"
 //#include "MovementRequest.h"
 #include "Sensors/SurfaceSensor.h"
-//#include "Sensors/UltrasonicSensor.h"
 //#include "Sensors/RPM_sensor.h"
 #include "MotionController.h"
 #include "SafetyModule.h"
@@ -34,7 +33,6 @@ public:
     bool EdgeAlignment();
 
     float GetDistance();
-    void TriggerUltrasonic();
 
 private:
     SafetyModule();
@@ -43,8 +41,6 @@ private:
     SurfaceSensor sensorBack;
 
     SafetyTriger sensorTrigger = SafetyTriger::NONE;
-
-    //UltrasonicModule ultrasonic; //(16,17);
 
     bool corection = false;
 
