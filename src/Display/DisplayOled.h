@@ -19,6 +19,8 @@ public:
     void println(char str);
     void setContrast(uint8_t value);
     void nightMod(bool night = true);
+    void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
+    void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
 
     void clear();
     void update();

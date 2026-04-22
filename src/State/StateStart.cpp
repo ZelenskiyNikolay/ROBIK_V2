@@ -44,7 +44,7 @@ void StateStart::update(float dt)
             num_menu = false;
         }
     }
-    
+
     IrLogic();
 
     Draw(dt);
@@ -58,7 +58,7 @@ void StateStart::IrLogic()
     {
     case Button1:
         if (menu == LABEL)
-            EventBus::push({EVENT_CHANGE_STATE, STATE_NORMAL});
+            EventBus::push({EVENT_CHANGE_STATE, STATE_CALIBRATION});
         break;
     case Button2:
         menu = BATARY;
@@ -130,6 +130,10 @@ void StateStart::Draw_D_Test()
     float heading = Compass::getInstance().getHeading();
     display->clear();
     char buffer[16];
+    sprintf(buffer, "G:D%d, A%d", MovementModule::getInstance().EastDistanse ,
+     MovementModule::getInstance().SouthAngle);
+    display->drawText(buffer, 0, 0, 1);
+
     sprintf(buffer, "D:%.1f%s", dis, "CM");
     display->drawText(buffer, 0, 20, 2);
     // Serial.println(buffer);

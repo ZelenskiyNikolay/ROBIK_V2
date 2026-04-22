@@ -27,6 +27,9 @@ public:
 
     float GetDistance();
     void TriggerUltrasonic();
+
+    int EastDistanse = 0;
+    int SouthAngle = 0;
 private:
     MovementModule();
     Ultrasonic ultrasonic; //(0,1);

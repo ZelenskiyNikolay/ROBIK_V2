@@ -21,7 +21,15 @@ void DisplayOled::drawText(const char *text, int x, int y, int size)
     display->print(text);
     NeedUpdate = true;
 }
-
+void DisplayOled::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color){
+    display->drawTriangle(x0,y0,x1,y1,x2,y2,color);
+    NeedUpdate = true;
+}
+void DisplayOled::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color)
+{
+    display->fillTriangle(x0,y0,x1,y1,x2,y2,color);
+    NeedUpdate = true;
+}
 void DisplayOled::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
 {
     display->drawLine(x0, y0, x1, y1, color);
