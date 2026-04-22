@@ -48,8 +48,8 @@ float Ultrasonic::getDistance()
     // Пересчитываем тики в сантиметры (зависит от частоты PIO)
     // Дистанция = (время * скорость звука) / 2
     float distance = ticks * 2.0f * 0.017f;
-    if (distance > 300.0f)
-        distance = 300.0f;
+    if (distance > 350.0f)
+        distance = 350.0f;
     return distance;
 }
 void Ultrasonic::TriggerUltrasonic() { pio_sm_put(pio, sm, 1); /* триггер измерения*/ }

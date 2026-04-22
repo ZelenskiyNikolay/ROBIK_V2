@@ -38,7 +38,7 @@ void setup()
   Compass::getInstance().begin();
   SDModule::getInstance().begin();
   SoundManager::getInstance().Init();
-  BatteryModule::getInstance().begin(A0);
+  BatteryModule::getInstance().begin(A0,2);
   IRSensor::getInstance().begin(23);
   RTCModule::getInstance().begin();
 }

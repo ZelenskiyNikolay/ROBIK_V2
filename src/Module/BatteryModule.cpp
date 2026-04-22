@@ -1,8 +1,10 @@
 #include "BatteryModule.h"
 
-void BatteryModule::begin(uint8_t pin)
+void BatteryModule::begin(uint8_t pin, uint8_t charge_pin)
 {
     this->pin = pin;
+    this->charge_pin = charge_pin;
+    pinMode(charge_pin, INPUT_PULLDOWN);
     adc_gpio_init(pin);
     analogReadResolution(12);
 }
@@ -17,30 +19,46 @@ void BatteryModule::update(float dt)
 
     timer = timeUpdate;
 
-    adc_run(false);             // 1. Ставим микрофон на паузу
-    
+    adc_run(false); // 1. Ставим микрофон на паузу
+
     // Определяем канал (пин 26 = 0, 27 = 1 и т.д.)
     adc_select_input(this->pin - 26); // 2. Явно переключаемся на АКБ
-    
-    adc_read();                 // 3. Холостой замер (сливаем остатки звука)
-    int raw = adc_read();       // 4. Реальное чтение вольтажа
-    
-    adc_select_input(1);        // 5. ВОЗВРАЩАЕМ АЦП микрофону (пин 27)
-    adc_run(true);              // 6. Снова запускаем микрофонный конвейер
+
+    long sum = 0;
+    adc_read(); // 3. Холостой замер (сливаем остатки звука)
+    for (int i = 0; i < 16; i++)
+    { // берем 16 замеров подряд
+        sum += adc_read();
+    }
+    int raw = sum / 16;
+
+    adc_select_input(1); // 5. ВОЗВРАЩАЕМ АЦП микрофону (пин 27)
+    adc_run(true);       // 6. Снова запускаем микрофонный конвейер
     // ------------------------------------------
 
     voltage = (raw / 4095.0f) * 3.3f * 2.0f;
 
-    if (voltage < 1.0f) {
+    // if (voltage < 0.1f || IsChargeConect())
+    // {
+     //   voltage = new_voltage;
+    // }
+    // else
+    // {
+    //     voltage = (voltage * 0.9f) + (new_voltage * 0.1f);
+    // }
+
+    if (voltage < 1.0f)
+    {
         Serial.println("Battery: Not connect or Power Off.....");
-    } else {
+    }
+    else
+    {
         Serial.print("Battery: ");
-        Serial.print(voltage); 
+        Serial.print(voltage);
         Serial.println(" V");
     }
 
     // int raw = analogRead(pin);
-
 
     // voltage = (raw / 4095.0f) * 3.3f * 2.0f; // измеренное напряжение
 
@@ -58,6 +76,11 @@ void BatteryModule::update(float dt)
     // }
 }
 
+bool BatteryModule::IsChargeConect() const
+{
+    return digitalRead(charge_pin);
+}
+
 float BatteryModule::getVoltage() const
 {
     return voltage;
@@ -68,7 +91,7 @@ int BatteryModule::getBatteryPercent()
     float voltage = getVoltage();
 
     // Адаптируй под свой делитель!
-    if (voltage > 4.1f)
+    if (voltage > 4.0f)
         return 100;
     if (voltage < 3.40f)
         return 0;

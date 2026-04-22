@@ -11,14 +11,17 @@ public:
         return instance;
     }
 
-    void begin(uint8_t pin);
+    void begin(uint8_t pin,uint8_t charge_pin);
     void update(float dt);
     float getVoltage() const;
+    bool IsChargeConect() const;
     int getBatteryPercent();
     void drawBatteryIcon(DisplayOled &display, int x, int y, int percent);
 private:
     BatteryModule(){}
     uint8_t pin;
+    uint8_t charge_pin;
+    bool _is_charge_conect = false;
     float voltage = 0.0f;
     unsigned long timer;
     unsigned long timeUpdate = 19000;

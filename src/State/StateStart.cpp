@@ -22,6 +22,29 @@ void StateStart::enter()
 void StateStart::update(float dt)
 {
     MovementModule::getInstance().update(dt);
+    BatteryModule &bat = BatteryModule::getInstance();
+
+    if (bat.getBatteryPercent() < 99)
+    {
+        if (bat.IsChargeConect())
+        {
+            if (menu != BATARY_CHARGING)
+            {
+                menu = BATARY_CHARGING;
+                num_menu = true;
+                timer = 0;
+            }
+        }
+    }
+    else
+    {
+        if (menu == BATARY_CHARGING)
+        {
+            menu = LABEL;
+            num_menu = false;
+        }
+    }
+    
     IrLogic();
 
     Draw(dt);
@@ -104,12 +127,14 @@ void StateStart::Draw(float dt)
 void StateStart::Draw_D_Test()
 {
     float dis = MovementModule::getInstance().GetDistance();
-
+    float heading = Compass::getInstance().getHeading();
     display->clear();
     char buffer[16];
-    sprintf(buffer, "DIS:%.1f%s", dis, "CM");
-    display->drawText(buffer, 0, 20 , 2);
-    //Serial.println(buffer);
+    sprintf(buffer, "D:%.1f%s", dis, "CM");
+    display->drawText(buffer, 0, 20, 2);
+    // Serial.println(buffer);
+    sprintf(buffer, "ANG:%.1f%s", heading, "'");
+    display->drawText(buffer, 0, 40, 2);
 }
 void StateStart::DrawLabel()
 {
@@ -139,24 +164,24 @@ void StateStart::SensorBat()
     sprintf(buffer1, "Voltage:%d.%02d V", whole, fract);
     display->drawText(buffer1, 0, 50, 1);
 }
+
 void StateStart::ChargeBat()
 {
+    display->drawText("CHARGING BATTERY:", 0, 0, 1);
+    char buffer1[16];
+    int percent = BatteryModule::getInstance().getBatteryPercent();
 
-    // display->drawText("CHARGING BATTERY:", 0, 0, 1);
-    // char buffer1[16];
-    // int percent = BatteryModule::getInstance().getBatteryPercent();
+    BatteryModule::getInstance().drawBatteryIcon(*display, 0, 10, percent);
 
-    // BatteryModule::getInstance().drawBatteryIcon(*display, 0, 10, percent);
+    sprintf(buffer1, "Charge:%02d%s", percent, " %");
+    display->drawText(buffer1, 0, 40, 1);
 
-    // sprintf(buffer1, "Charge:%02d%s", percent, " %");
-    // display->drawText(buffer1, 0, 40, 1);
+    float v = BatteryModule::getInstance().getVoltage();
+    int whole = v;
+    int fract = (v - whole) * 100;
 
-    // float v = BatteryModule::getInstance().getVoltage();
-    // int whole = v;
-    // int fract = (v - whole) * 100;
-
-    // sprintf(buffer1, "Voltage:%d.%02d V", whole, fract);
-    // display->drawText(buffer1, 0, 50, 1);
+    sprintf(buffer1, "Voltage:%d.%02d V", whole, fract);
+    display->drawText(buffer1, 0, 50, 1);
 }
 
 void StateStart::DrawClock(float dt)

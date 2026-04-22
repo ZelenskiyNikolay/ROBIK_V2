@@ -11,7 +11,7 @@
 #include "Core/EventBus.h"
 #include "Sensors/IRSensor.h"
 // #include "Module/PowerModule.h"
-
+#include "Sensors/Compass.h"
 #include "MOVE/MovementModule.h"
 
 enum MenuShow

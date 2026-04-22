@@ -29,6 +29,12 @@ void StateNormal::IdelProcess(float dt)
 
 void StateNormal::update(float dt)
 {
+    if(BatteryModule::getInstance().IsChargeConect() &&
+     BatteryModule::getInstance().getBatteryPercent() < 80)
+    {
+        EventBus::push({EVENT_CHANGE_STATE, STATE_START});
+    }
+
     IdelProcess(dt);
     MovementModule::getInstance().update(dt);
     if (VoiceControl::getInstance().Is_New_Comand)
