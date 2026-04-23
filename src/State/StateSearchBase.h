@@ -4,6 +4,8 @@
 #include "Display/SpriteOled.h"
 #include "Sensors/IRSensor.h"
 #include "MOVE/MovementModule.h"
+#include "Sensors/Compass.h"
+#include "Module/BatteryModule.h"
 
 enum LookState
 {
@@ -58,10 +60,10 @@ private:
     int cur = 0;
     bool moveEast = false;
 
-    int maxDistance = 0;
-    int bestStep = 0;
-    int corner = 0;
-    int currentStep = 0;
+    // int maxDistance = 0;
+    // int bestStep = 0;
+    // int corner = 0;
+    // int currentStep = 0;
 
     bool lookSouth = false;
     float timer;

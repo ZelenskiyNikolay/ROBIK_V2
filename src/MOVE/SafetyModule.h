@@ -1,8 +1,8 @@
 #pragma once
-//#include "MotorModule.h"
-//#include "MovementRequest.h"
+// #include "MotorModule.h"
+// #include "MovementRequest.h"
 #include "Sensors/SurfaceSensor.h"
-//#include "Sensors/RPM_sensor.h"
+// #include "Sensors/RPM_sensor.h"
 #include "MotionController.h"
 #include "SafetyModule.h"
 #include "MOVE/MovementBridge.h"
@@ -24,13 +24,12 @@ public:
         static SafetyModule instance;
         return instance;
     }
-    long GetTics(bool left=true);
+    long GetTics(bool left = true);
     void update(float dt);
     bool isBusy() const;
     void NewMov(MotionState Command, float Left = 0, float Right = 0);
     void MoveSpeed(bool HiSpeed = true);
     void StopMov();
-    
 
     float GetDistance();
 
@@ -44,6 +43,8 @@ private:
 
     bool corection = false;
     bool edgeAlign = false;
+    bool leftHit = false;
+    bool rightHit = false;
 
     bool EdgeAlignment(float dt);
     bool CheckSensors();

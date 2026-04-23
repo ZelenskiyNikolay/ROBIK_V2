@@ -80,20 +80,20 @@ void MotionController::NewMov(MotionState Command, float Left, float Right)
     Serial.println(command.targetRight);
 }
 
-float timer2 = 0;
+// float timer2 = 0;
 int MotionController::update(float dt)
 {
-    timer2 -= dt;
-    if (timer2 < 0)
-    {
-        Serial.print("command.type: ");
-        Serial.print(command.type);
-        Serial.print("ommand.targetLeft: ");
-        Serial.print(command.targetLeft);
-        Serial.print("ommand.targetLeft: ");
-        Serial.println(command.targetRight);
-        timer2 = 1000;
-    }
+    // timer2 -= dt;
+    // if (timer2 < 0)
+    // {
+    //     Serial.print("command.type: ");
+    //     Serial.print(command.type);
+    //     Serial.print("ommand.targetLeft: ");
+    //     Serial.print(command.targetLeft);
+    //     Serial.print("ommand.targetLeft: ");
+    //     Serial.println(command.targetRight);
+    //     timer2 = 1000;
+    // }
     timer -= dt;
 
     if (command.type != IDLE)

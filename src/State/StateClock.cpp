@@ -17,7 +17,7 @@ void StateClock::update(float dt)
     VoiceControl::getInstance().Update();
     if (logic_timer < 0)
     {
-        logic_timer = UP_TIME;
+        logic_timer = UPDATE_TIME;
         if (VoiceControl::getInstance().Is_New_Comand)
         {
             VoiceComand = VoiceControl::getInstance().Get_Voice_Comand();

@@ -6,7 +6,7 @@
 // #include "Sensors/RPM_sensor.h"
 
 #define STEPS_90 1095
-
+#define STEPS_1_DEGREE 12
 #define STEPS_PER_REV 2048 // 28BYJ-48 (half-step)
 
 #define EN_PIN 10

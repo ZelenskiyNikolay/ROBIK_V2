@@ -8,7 +8,7 @@
 #include "Module/RTCModule.h"
 #include "SoundMic/VoiceControl.h"
 
-#define UP_TIME 1000
+#define UPDATE_TIME 1000
 #define DISPLAY_UP_TIME 500
 
 class StateClock : public State

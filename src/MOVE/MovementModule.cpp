@@ -30,8 +30,8 @@ void MovementModule::MoveSpeed(bool HiSpeed)
 void MovementModule::StopMov()
 {
     NewMov(MotionState::IDLE);
-    // moveBridge.Command = IDLE;
-    // moveBridge.New_Command = true;
+    moveBridge.Command = IDLE;
+    moveBridge.New_Command = true;
 }
 
 void MovementModule::update(float dt)

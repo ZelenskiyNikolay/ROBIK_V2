@@ -8,17 +8,17 @@ SafetyModule::SafetyModule()
 }
 
 void SafetyModule::MoveSpeed(bool HiSpeed) { motion.MoveSpeed(HiSpeed); }
-int Time = 1000;
-float timer = 0;
+// int Time = 1000;
+// float timer = 0;
 void SafetyModule::update(float dt)
 {
-    timer -= dt;
-    if (timer < 0)
-    {
-        Serial.print("ЕdgeAlign: ");
-        Serial.println(edgeAlign);
-        timer = Time;
-    }
+    // timer -= dt;
+    // if (timer < 0)
+    // {
+    //     Serial.print("ЕdgeAlign: ");
+    //     Serial.println(edgeAlign);
+    //     timer = Time;
+    // }
     if (!edgeAlign)
     {
 
@@ -81,23 +81,22 @@ void SafetyModule::update(float dt)
 
 void SafetyModule::StopMov() { motion.Stop(); }
 
-bool leftHit = false;
-bool rightHit = false;
-float timer1 = 0;
+
+// float timer1 = 0;
 bool SafetyModule::EdgeAlignment(float dt)
 {
     bool Left = sensorLeft.GetSensorState();
     bool Right = sensorRight.GetSensorState();
 
-    timer1 -= dt;
-    if (timer1 < 0)
-    {
-        Serial.print("leftHit: ");
-        Serial.print(leftHit);
-        Serial.print("rightHit: ");
-        Serial.print(rightHit);
-        timer1 = Time;
-    }
+    // timer1 -= dt;
+    // if (timer1 < 0)
+    // {
+    //     Serial.print("leftHit: ");
+    //     Serial.print(leftHit);
+    //     Serial.print("rightHit: ");
+    //     Serial.print(rightHit);
+    //     timer1 = Time;
+    // }
     motion.update(dt);
 
     if (!Left)
