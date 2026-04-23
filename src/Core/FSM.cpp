@@ -55,7 +55,7 @@ void FSM::changeStateById(StateID id)
     case STATE_IDEL:      next = new StateIdel(*display);      break;
     // case STATE_SLEEPY:      next = new StateSleepy(*display);      break;
     // case STATE_CLOCK:       next = new StateClock(*display);       break;
-    //case STATE_SEARCH_BASE: next = new StateSearchBase(*display); break;
+    case STATE_SEARCH_BASE: next = new StateSearchBase(*display); break;
     case STATE_CALIBRATION: next = new StateCalibration(*display); break;
     default:
         next = new StateNormal(*display);

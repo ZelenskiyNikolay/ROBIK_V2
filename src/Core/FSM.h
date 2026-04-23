@@ -8,7 +8,7 @@
 #include "State/StateVoiceRecord.h"
 #include "State/StateClock.h"
 #include "State/StateIdel.h"
-// #include "State/StateSearchBase.h"
+#include "State/StateSearchBase.h"
 
 class FSM {
 public:
