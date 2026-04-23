@@ -30,7 +30,7 @@ public:
     void NewMov(MotionState Command, float Left = 0, float Right = 0);
     void MoveSpeed(bool HiSpeed = true);
     void StopMov();
-    bool EdgeAlignment();
+    
 
     float GetDistance();
 
@@ -43,7 +43,9 @@ private:
     SafetyTriger sensorTrigger = SafetyTriger::NONE;
 
     bool corection = false;
+    bool edgeAlign = false;
 
+    bool EdgeAlignment(float dt);
     bool CheckSensors();
     void Corection();
 };

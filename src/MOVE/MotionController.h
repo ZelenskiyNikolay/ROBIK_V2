@@ -31,6 +31,7 @@ private:
     void BackwardMov();
     void TurnLeft();
     void TurnRight();
+    void EdgeAlign();
 public:
     MotionController();
     void begin();
@@ -39,4 +40,6 @@ public:
     void NewMov(MotionState Command, float Left = 0, float Right = 0);
     void MoveSpeed(bool HiSpeed = true);
     void Stop();
+    void StopLeft();
+    void StopRight();
 };

@@ -2,85 +2,123 @@
 
 SafetyModule::SafetyModule()
     : sensorLeft(11), sensorRight(12), sensorBack(24), motion()
-                                                // ultrasonic(28, 3), motion()
 {
-    // ultrasonic.begin();
     CheckSensors();
     motion.begin();
 }
 
-
 void SafetyModule::MoveSpeed(bool HiSpeed) { motion.MoveSpeed(HiSpeed); }
-
+int Time = 1000;
+float timer = 0;
 void SafetyModule::update(float dt)
 {
-    if (!isBusy())
+    timer -= dt;
+    if (timer < 0)
     {
-        if (moveBridge.New_Command)
+        Serial.print("ЕdgeAlign: ");
+        Serial.println(edgeAlign);
+        timer = Time;
+    }
+    if (!edgeAlign)
+    {
+
+        if (!isBusy())
         {
-            switch (moveBridge.Command)
+            if (moveBridge.New_Command)
             {
-            case SET_SPEED:
-                MoveSpeed(moveBridge.HiSpeed);
-                moveBridge.New_Command = false;
-                break;
-            case IDLE:
-                StopMov();
-            break;
-            default:
-                MoveSpeed(moveBridge.HiSpeed);
-                NewMov(moveBridge.Command, moveBridge.Left, moveBridge.Right);
-                moveBridge.IsBusy = true;
-                moveBridge.New_Command = false;
-                break;
+                switch (moveBridge.Command)
+                {
+                case SET_SPEED:
+                    MoveSpeed(moveBridge.HiSpeed);
+                    moveBridge.New_Command = false;
+                    break;
+                case IDLE:
+                    StopMov();
+                    moveBridge.New_Command = false;
+                    break;
+                case EDGE_ALIG:
+                    edgeAlign = true;
+                    NewMov(moveBridge.Command);
+                    moveBridge.IsBusy = true;
+                    moveBridge.New_Command = false;
+                    break;
+                default:
+                    MoveSpeed(moveBridge.HiSpeed);
+                    NewMov(moveBridge.Command, moveBridge.Left, moveBridge.Right);
+                    moveBridge.IsBusy = true;
+                    moveBridge.New_Command = false;
+                    break;
+                }
             }
+            else
+                moveBridge.IsBusy = false;
+        }
+
+        if (corection)
+        {
+            CheckSensors();
+            Corection();
+            motion.update(dt);
+            return;
+        }
+        if (CheckSensors())
+        {
+            corection = true;
         }
         else
-            moveBridge.IsBusy = false;
-    }
-
-    if (corection)
-    {
-        CheckSensors();
-        Corection();
-        motion.update(dt);
-        return;
-    }
-    if (CheckSensors())
-    {
-        corection = true;
+        {
+            motion.update(dt);
+        }
     }
     else
     {
-        motion.update(dt);
+        if (EdgeAlignment(dt))
+        {
+            edgeAlign = false;
+        }
     }
 }
 
-void SafetyModule::StopMov() {}
-// bool SafetyModule::EdgeAlignment()
-// {
-//     bool Left = sensorLeft.GetSensorState();
-//     bool Right = sensorRight.GetSensorState();
+void SafetyModule::StopMov() { motion.Stop(); }
 
-//     if (Left && Right)
-//     {
-//         motion.Forward();
-//     }
-//     if (!Left)
-//     {
-//         motion.LeftStop();
-//     }
-//     if (!Right)
-//     {
-//         motion.RightStop();
-//     }
-//     if (!Left && !Right)
-//     {
-//         motion.SafatyStop();
-//         return true;
-//     }
-//     return false;
-// }
+bool leftHit = false;
+bool rightHit = false;
+float timer1 = 0;
+bool SafetyModule::EdgeAlignment(float dt)
+{
+    bool Left = sensorLeft.GetSensorState();
+    bool Right = sensorRight.GetSensorState();
+
+    timer1 -= dt;
+    if (timer1 < 0)
+    {
+        Serial.print("leftHit: ");
+        Serial.print(leftHit);
+        Serial.print("rightHit: ");
+        Serial.print(rightHit);
+        timer1 = Time;
+    }
+    motion.update(dt);
+
+    if (!Left)
+    {
+        leftHit = true;
+        motion.StopLeft();
+    }
+    if (!Right)
+    {
+        rightHit = true;
+        motion.StopRight();
+    }
+    if (leftHit && rightHit)
+    {
+        motion.Stop();
+        leftHit = false;
+        rightHit = false;
+        return true;
+    }
+    return false;
+}
 void SafetyModule::Corection()
 {
     switch (sensorTrigger)
@@ -108,7 +146,7 @@ bool SafetyModule::CheckSensors()
     bool Right = sensorRight.GetSensorState();
     bool Back = sensorBack.GetSensorState();
 
-    if (Left && Right &&  Back)
+    if (Left && Right && Back)
         sensorTrigger = SafetyTriger::NONE;
     else if (!Left)
         sensorTrigger = SafetyTriger::SENSOR_LEFT;
@@ -128,5 +166,3 @@ void SafetyModule::NewMov(MotionState Command, float Left, float Right)
 {
     motion.NewMov(Command, Left, Right);
 }
-// long SafetyModule::GetTics(bool left) { return motion.GetTics(left); }
-// void SafetyModule::StopMov(){ motion.SafatyStop();}

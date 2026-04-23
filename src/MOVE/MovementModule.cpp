@@ -7,7 +7,7 @@ MovementModule::MovementModule()
 
 void MovementModule::Init() {}
 float MovementModule::GetDistance() { return ultrasonic.DistanceUltrasonic(); }
-//void MovementModule::TriggerUltrasonic(){ultrasonic.TriggerUltrasonic();}
+void MovementModule::TriggerUltrasonic(){ultrasonic.TriggerUltrasonic();}
 
 void MovementModule::NewMov(MotionState Command, float Left, float Right)
 {

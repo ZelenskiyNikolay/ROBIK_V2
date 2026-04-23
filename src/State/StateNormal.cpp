@@ -99,6 +99,10 @@ void StateNormal::IrLogic()
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});
         break;
 
+    case Button9:
+        EventBus::push({EVENT_CHANGE_STATE, STATE_SEARCH_BASE});
+        break;
+
     case Button4:
         MovementModule::getInstance().NewMov(MotionState::TURN_LEFT);
         break;

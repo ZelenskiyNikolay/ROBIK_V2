@@ -90,17 +90,20 @@ void StateCalibration::ProcessCalibration(float dt)
         {
             MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT, 0.15, 0.15);
             steep_calibration++;
+            timer1 = 500;
             return;
         }
     }
     if (steep_calibration == 6)
     {
-        if (!MovementModule::getInstance().isBusy())
-        {
-            MovementModule::getInstance().NewMov(MotionState::BACKWARD, 0.5, 0.5);
-            steep_calibration++;
-            return;
-        }
+        timer1 -= dt;
+        if (timer1 < 0)
+            if (!MovementModule::getInstance().isBusy())
+            {
+                MovementModule::getInstance().NewMov(MotionState::BACKWARD, 0.5, 0.5);
+                steep_calibration++;
+                return;
+            }
     }
     if (steep_calibration > 6)
     {
@@ -109,18 +112,18 @@ void StateCalibration::ProcessCalibration(float dt)
     }
 }
 
-void drawCompassIcon(int16_t x, int16_t y, DisplayOled &display) {
+void drawCompassIcon(int16_t x, int16_t y, DisplayOled &display)
+{
     // 1. Рисуем круг (радиус 10 пикселей)
     display.drawCircle(x, y, 10, SSD1306_WHITE);
-    
+
     // 2. Рисуем "Север" (закрашенный треугольник)
     // Координаты: (верхушка, левый угол, правый угол)
     display.fillTriangle(x, y - 8, x - 4, y, x + 4, y, SSD1306_WHITE);
-    
+
     // 3. Рисуем "Юг" (пустой треугольник)
     display.drawTriangle(x, y + 8, x - 4, y, x + 4, y, SSD1306_WHITE);
-    
-    
+
     display.drawText("N", x - 2, y - 18, 1);
 }
 void StateCalibration::Draw(float dt)
@@ -130,7 +133,7 @@ void StateCalibration::Draw(float dt)
     {
         display->clear();
         display->drawText("Calibration:", 0, 0, 1);
-        drawCompassIcon(110, 25,*display);
+        drawCompassIcon(110, 25, *display);
         char buffer[32];
         sprintf(buffer, "Аng: %d cm", MovementModule::getInstance().SouthAngle);
         display->drawText(buffer, 0, 55, 1);

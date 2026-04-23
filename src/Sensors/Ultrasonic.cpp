@@ -52,7 +52,7 @@ float Ultrasonic::getDistance()
         distance = 350.0f;
     return distance;
 }
-void Ultrasonic::TriggerUltrasonic() { pio_sm_put(pio, sm, 1); /* триггер измерения*/ }
+void Ultrasonic::TriggerUltrasonic() { pio_sm_put(pio, sm, 1); busy = true; /* триггер измерения*/ }
 float Ultrasonic::DistanceUltrasonic(){ return _last_dis;}
 
 void Ultrasonic::update(float dt)

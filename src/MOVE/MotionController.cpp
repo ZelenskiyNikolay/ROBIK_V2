@@ -21,9 +21,16 @@ void MotionController::MoveSpeed(bool HiSpeed)
 
 void MotionController::NewMov(MotionState Command, float Left, float Right)
 {
+    if(command.type == Command)
+        return;
     switch (Command)
     {
     case MotionState::IDLE:
+        command.type = Command;
+        break;
+    case MotionState::EDGE_ALIG:
+        command.targetLeft = (float)STEPS_PER_REV * 10;
+        command.targetRight = (float)STEPS_PER_REV * 10;
         command.type = Command;
         break;
     case MotionState::FORWARD:
@@ -38,14 +45,18 @@ void MotionController::NewMov(MotionState Command, float Left, float Right)
         break;
     case MotionState::TURN_LEFT:
         if (Left < 0.01)
-            {Left = Right = 0.01f; }
+        {
+            Left = Right = 0.01f;
+        }
         command.targetLeft = roundf(Left * STEPS_90 * 4);
         command.targetRight = roundf(Right * STEPS_90 * 4);
         command.type = Command;
         break;
     case MotionState::TURN_RIGHT:
         if (Right < 0.01)
-            {Left = Right = 0.01f; }
+        {
+            Left = Right = 0.01f;
+        }
         command.targetLeft = roundf(Left * STEPS_90 * 4);
         command.targetRight = roundf(Right * STEPS_90 * 4);
         command.type = Command;
@@ -61,16 +72,28 @@ void MotionController::NewMov(MotionState Command, float Left, float Right)
         command.type = Command;
         break;
     }
-    // Serial.print("Move type: ");
-    // Serial.print(command.type);
-    // Serial.print(" ||  targetLeft: ");
-    // Serial.print(command.targetLeft);
-    // Serial.print(" targetRight: ");
-    // Serial.println(command.targetRight);
+    Serial.print("Move type: ");
+    Serial.print(command.type);
+    Serial.print(" ||  targetLeft: ");
+    Serial.print(command.targetLeft);
+    Serial.print(" targetRight: ");
+    Serial.println(command.targetRight);
 }
 
+float timer2 = 0;
 int MotionController::update(float dt)
 {
+    timer2 -= dt;
+    if (timer2 < 0)
+    {
+        Serial.print("command.type: ");
+        Serial.print(command.type);
+        Serial.print("ommand.targetLeft: ");
+        Serial.print(command.targetLeft);
+        Serial.print("ommand.targetLeft: ");
+        Serial.println(command.targetRight);
+        timer2 = 1000;
+    }
     timer -= dt;
 
     if (command.type != IDLE)
@@ -118,10 +141,44 @@ int MotionController::update(float dt)
     case TURN_RIGHT90:
         TurnRight();
         break;
+    case EDGE_ALIG:
+        EdgeAlign();
+        break;
     case IDLE:
         break;
     }
     return -1;
+}
+
+void MotionController::EdgeAlign()
+{
+    if (command.targetLeft > 0)
+    {
+        command.targetLeft--;
+        motorL.Step(false);
+    }
+    if (command.targetRight > 0)
+    {
+        command.targetRight--;
+        motorR.Step(true);
+    }
+}
+
+void MotionController::Stop()
+{
+    command.targetLeft = 0;
+    command.targetRight = 0;
+    command.type = IDLE;
+}
+void MotionController::StopLeft()
+{
+    if (command.targetLeft > 0)
+        command.targetLeft = 0;
+}
+void MotionController::StopRight()
+{
+    if (command.targetRight > 0)
+        command.targetRight = 0;
 }
 
 void MotionController::TurnRight()
