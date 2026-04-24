@@ -49,7 +49,7 @@ void StateSearchBase::AutoSearchBase(float dt)
     if (Steep == 0)
     {
         RotateSouth = true;
-        autoTimer = 1000;
+        autoTimer = 5000;
         Steep++;
         return;
     }
@@ -369,7 +369,7 @@ void drawSearchBaseIcon(DisplayOled &display)
 {
     display.clear();
     int cx = 64; // Центр экрана по X
-    int cy = 32; // Центр экрана по Y
+    int cy = 20; // Центр экрана по Y
 
     // 1. Крыша (Треугольник: x0, y0, x1, y1, x2, y2)
     display.drawTriangle(cx, cy - 20, cx - 25, cy, cx + 25, cy, WHITE);
@@ -384,7 +384,7 @@ void drawSearchBaseIcon(DisplayOled &display)
     // Опционально: маска, чтобы дуга была только сверху
     display.fillRect(cx - 10, cy + 13, 20, 10, BLACK);
 
-    display.drawText("SEARCH", cx - 15, cy + 30, 1);
+    display.drawText("SEARCH BASE", cx - 25, cy + 30, 1);
     // 4. Текст или статус
 }
 void StateSearchBase::Draw(float dt)

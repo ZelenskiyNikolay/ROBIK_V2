@@ -21,7 +21,11 @@ void SafetyModule::update(float dt)
     // }
     if (!edgeAlign)
     {
-
+        if (moveBridge.Command == IDLE && moveBridge.New_Command)
+        {
+            StopMov();
+            moveBridge.New_Command = false;
+        }
         if (!isBusy())
         {
             if (moveBridge.New_Command)
@@ -30,10 +34,6 @@ void SafetyModule::update(float dt)
                 {
                 case SET_SPEED:
                     MoveSpeed(moveBridge.HiSpeed);
-                    moveBridge.New_Command = false;
-                    break;
-                case IDLE:
-                    StopMov();
                     moveBridge.New_Command = false;
                     break;
                 case EDGE_ALIG:
@@ -81,22 +81,14 @@ void SafetyModule::update(float dt)
 
 void SafetyModule::StopMov() { motion.Stop(); }
 
-
-// float timer1 = 0;
 bool SafetyModule::EdgeAlignment(float dt)
 {
     bool Left = sensorLeft.GetSensorState();
     bool Right = sensorRight.GetSensorState();
 
-    // timer1 -= dt;
-    // if (timer1 < 0)
-    // {
-    //     Serial.print("leftHit: ");
-    //     Serial.print(leftHit);
-    //     Serial.print("rightHit: ");
-    //     Serial.print(rightHit);
-    //     timer1 = Time;
-    // }
+    if (!isBusy())
+        edgeAlign = false;
+
     motion.update(dt);
 
     if (!Left)

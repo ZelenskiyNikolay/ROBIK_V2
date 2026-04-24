@@ -87,7 +87,7 @@ void StateNormal::IrLogic()
     switch (tmp)
     {
     case Button1:
-        SoundManager::getInstance().Play("Sound/Hello/Dima.wav");
+        MovementModule::getInstance().StopMov();
         break;
     case Button2:
         SoundManager::getInstance().Play("Sound/Hello/Aliona.wav");
