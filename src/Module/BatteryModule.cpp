@@ -24,8 +24,18 @@ void BatteryModule::update(float dt)
     // Определяем канал (пин 26 = 0, 27 = 1 и т.д.)
     adc_select_input(this->pin - 26); // 2. Явно переключаемся на АКБ
 
+    // чистим FIFO
+    adc_fifo_drain();
+
+    // даем стабилизироваться
+    sleep_us(50);
+
     long sum = 0;
-    adc_read(); // 3. Холостой замер (сливаем остатки звука)
+    for (int i = 0; i < 8; i++)
+    {
+        adc_read();
+    } // 3. Холостой замер (сливаем остатки звука)
+
     for (int i = 0; i < 16; i++)
     { // берем 16 замеров подряд
         sum += adc_read();
@@ -36,16 +46,13 @@ void BatteryModule::update(float dt)
     adc_run(true);       // 6. Снова запускаем микрофонный конвейер
     // ------------------------------------------
 
-    voltage = (raw / 4095.0f) * 3.3f * 2.0f;
+    float temp = ((raw / 4095.0f) * 3.3f * 2.0f) * BAT_CAL;
+    float delta = voltage - temp;
+    if (abs(delta) < 0.2)
+        voltage = (voltage * 0.8) + (temp * 0.2);
 
-    // if (voltage < 0.1f || IsChargeConect())
-    // {
-     //   voltage = new_voltage;
-    // }
-    // else
-    // {
-    //     voltage = (voltage * 0.9f) + (new_voltage * 0.1f);
-    // }
+    if (abs(delta) > 2)
+        voltage = temp;
 
     if (voltage < 1.0f)
     {
@@ -57,23 +64,6 @@ void BatteryModule::update(float dt)
         Serial.print(voltage);
         Serial.println(" V");
     }
-
-    // int raw = analogRead(pin);
-
-    // voltage = (raw / 4095.0f) * 3.3f * 2.0f; // измеренное напряжение
-
-    // // voltage *= 0.95f; //калибровка
-
-    // if (voltage < 1.0f)
-    // {
-    //     Serial.println("Battery: Not conect or Power Off.....");
-    // }
-    // else
-    // {
-    //     Serial.print("Battery: ");
-    //     Serial.print(getVoltage()); // Печать значения в порт
-    //     Serial.println(" V");
-    // }
 }
 
 bool BatteryModule::IsChargeConect() const

@@ -13,7 +13,7 @@ void StateNormal::enter()
 
     VoiceControl::getInstance().begin();
 }
-#define UP_TIME 1000
+//#define UPDATE_TIME 1000
 float logic_timer = 0;
 VoiceCmd VoiceComand;
 bool New_Comand = false;

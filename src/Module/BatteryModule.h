@@ -4,6 +4,8 @@
 #include "hardware/adc.h"
 #include "hardware/irq.h"
 
+#define BAT_CAL 1.045f
+
 class BatteryModule {
 public:
     static BatteryModule& getInstance() {
@@ -19,10 +21,11 @@ public:
     void drawBatteryIcon(DisplayOled &display, int x, int y, int percent);
 private:
     BatteryModule(){}
+    float GetFilterVoltage();
     uint8_t pin;
     uint8_t charge_pin;
     bool _is_charge_conect = false;
     float voltage = 0.0f;
     unsigned long timer;
-    unsigned long timeUpdate = 19000;
+    unsigned long timeUpdate = 10000;
 };
