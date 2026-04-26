@@ -4,7 +4,7 @@
 #include "hardware/adc.h"
 #include "hardware/irq.h"
 
-#define BAT_CAL 1.045f
+#define BAT_CAL 1.04f
 
 class BatteryModule {
 public:
