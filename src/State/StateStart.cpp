@@ -128,11 +128,19 @@ void StateStart::Draw_D_Test()
 {
     float dis = MovementModule::getInstance().GetDistance();
     float heading = Compass::getInstance().getHeading();
+    MovementModule::getInstance().NewMov(GET_ODONOMETRY);
+    Odonometry temp;
+    if (moveBridge.Odonometry_Apdeted)
+    {
+        temp = moveBridge.odonometry;
+    }
+
     display->clear();
     char buffer[16];
-    sprintf(buffer, "G:D%d, A%d", MovementModule::getInstance().EastDistanse ,
-     MovementModule::getInstance().SouthAngle);
+    sprintf(buffer, "Left:%d, Right%d", temp.left, temp.right);
     display->drawText(buffer, 0, 0, 1);
+    Serial.print("Odonometry :");
+    Serial.println(buffer);
 
     sprintf(buffer, "D:%.1f%s", dis, "CM");
     display->drawText(buffer, 0, 20, 2);

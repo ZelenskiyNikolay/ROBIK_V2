@@ -14,6 +14,8 @@ public:
     bool Idel();
     void update(float dt);
     void SetSpeed(bool Speed);
+    long GetTics();
+    void AddTics(bool Add = true);
 private:
     uint8_t step;
     uint8_t dir;
@@ -22,4 +24,5 @@ private:
 
     bool phaseTwo = false;
     float timer = step_time;   
+    long tics = 0;
 };

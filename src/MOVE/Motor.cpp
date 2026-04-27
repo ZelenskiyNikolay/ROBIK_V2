@@ -14,6 +14,15 @@ void Motor::begin()
     digitalWrite(dir, LOW);
 }
 
+long Motor::GetTics(){return tics;}
+void Motor::AddTics(bool Add)
+{
+    if (Add)
+        tics--;
+    else
+        tics++;
+}
+
 void Motor::Step(bool stip_dir)
 {
     digitalWrite(dir, stip_dir);
@@ -41,7 +50,7 @@ void Motor::update(float dt)
 }
 void Motor::SetSpeed(bool Speed)
 {
-    if(Speed)
+    if (Speed)
         step_time = MAX_SPEED;
     else
         step_time = SLOW_SPEED;

@@ -19,9 +19,17 @@ void MotionController::MoveSpeed(bool HiSpeed)
     motorR.SetSpeed(HiSpeed);
 }
 
+Odonometry MotionController::GetTics()
+{
+    Odonometry temp;
+    temp.left = motorL.GetTics();
+    temp.right = -motorR.GetTics();
+    return temp;
+}
+
 void MotionController::NewMov(MotionState Command, float Left, float Right)
 {
-    if(command.type == Command)
+    if (command.type == Command)
         return;
     switch (Command)
     {
@@ -156,11 +164,13 @@ void MotionController::EdgeAlign()
     {
         command.targetLeft--;
         motorL.Step(false);
+        motorL.AddTics(false);
     }
     if (command.targetRight > 0)
     {
         command.targetRight--;
         motorR.Step(true);
+        motorR.AddTics();
     }
 }
 
@@ -187,12 +197,14 @@ void MotionController::TurnRight()
     {
         command.targetLeft--;
         motorL.Step(true);
+        motorL.AddTics();
     }
 
     if (motorR.Idel())
     {
         command.targetRight--;
         motorR.Step(true);
+        motorR.AddTics();
     }
 }
 void MotionController::TurnLeft()
@@ -201,12 +213,14 @@ void MotionController::TurnLeft()
     {
         command.targetLeft--;
         motorL.Step(false);
+        motorL.AddTics(false);
     }
 
     if (motorR.Idel())
     {
         command.targetRight--;
         motorR.Step(false);
+        motorR.AddTics(false);
     }
 }
 
@@ -216,12 +230,14 @@ void MotionController::ForwardMov()
     {
         command.targetLeft--;
         motorL.Step(false);
+        motorL.AddTics(false);
     }
 
     if (motorR.Idel())
     {
         command.targetRight--;
         motorR.Step(true);
+        motorR.AddTics();
     }
 }
 
@@ -231,12 +247,14 @@ void MotionController::BackwardMov()
     {
         command.targetLeft--;
         motorL.Step(true);
+        motorL.AddTics();
     }
 
     if (motorR.Idel())
     {
         command.targetRight--;
         motorR.Step(false);
+        motorR.AddTics(false);
     }
 }
 

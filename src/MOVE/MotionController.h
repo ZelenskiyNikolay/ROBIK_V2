@@ -1,6 +1,7 @@
 #pragma once
 #include "Motor.h"
 #include "MOVE/Motion.h"
+#include "MOVE/Tics.h"
 //#include "Sensors/Compass.h"
 // #include "MotorModule.h"
 // #include "Sensors/RPM_sensor.h"
@@ -10,7 +11,6 @@
 #define STEPS_PER_REV 2048 // 28BYJ-48 (half-step)
 
 #define EN_PIN 10
-
 
 class MotionController
 {
@@ -32,6 +32,7 @@ private:
     void TurnLeft();
     void TurnRight();
     void EdgeAlign();
+
 public:
     MotionController();
     void begin();
@@ -42,4 +43,6 @@ public:
     void Stop();
     void StopLeft();
     void StopRight();
+    
+    Odonometry GetTics();
 };

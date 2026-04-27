@@ -13,6 +13,7 @@
 // #include "Module/PowerModule.h"
 #include "Sensors/Compass.h"
 #include "MOVE/MovementModule.h"
+#include "MOVE/Tics.h"
 
 enum MenuShow
 {

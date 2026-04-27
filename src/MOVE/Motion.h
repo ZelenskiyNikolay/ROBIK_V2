@@ -10,7 +10,8 @@ enum MotionState
     TURN_RIGHT90,
     SET_SPEED,
     WEIT,
-    EDGE_ALIG
+    EDGE_ALIG,
+    GET_ODONOMETRY
 };
 
 struct MotionCommand

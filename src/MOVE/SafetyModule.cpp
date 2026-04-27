@@ -38,9 +38,15 @@ void SafetyModule::update(float dt)
                     break;
                 case EDGE_ALIG:
                     edgeAlign = true;
-                    NewMov(moveBridge.Command);
+                    //NewMov(moveBridge.Command);
                     moveBridge.IsBusy = true;
                     moveBridge.New_Command = false;
+                    break;
+                case GET_ODONOMETRY:
+                    moveBridge.odonometry = motion.GetTics();
+                    moveBridge.Odonometry_Apdeted = true;
+                    moveBridge.New_Command = false;
+                    moveBridge.IsBusy = false;
                     break;
                 default:
                     MoveSpeed(moveBridge.HiSpeed);
