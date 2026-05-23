@@ -1,22 +1,5 @@
 #include <includes.h>
 
-float getDeltaTime()
-{
-  unsigned long now = millis();
-  unsigned long dt = now - lastTime;
-  lastTime = now;
-
-  return dt;
-}
-float getDeltaTime1()
-{
-  unsigned long now = millis();
-  unsigned long dt = now - lastTime1;
-  lastTime1 = now;
-
-  return dt;
-}
-
 void setup()
 {
   Serial.begin(9600);
@@ -25,15 +8,14 @@ void setup()
 
   randomSeed(analogRead(A3));
 
-  if (!display.begin(SSD1306_SWITCHCAPVCC))
-  {
-    while (true)
-      ;
-  }
-  display.clearDisplay();
-  display.display();
+  display = new Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET, OLED_CS);
+  displaySys = new DisplayOled(*display);
 
-  fsm = new FSM(new StateStart(displaySys), &displaySys);
+  display->begin(SSD1306_SWITCHCAPVCC);
+  display->clearDisplay();
+  display->display();
+
+  fsm = new FSM(new StateStartV2(*displaySys), displaySys);
 
   Compass::getInstance().begin();
   SDModule::getInstance().begin();
@@ -59,36 +41,12 @@ void loop()
     fsm->handleEvent(EventBus::poll());
   }
   fsm->update(dt);
-  displaySys.update();
+  displaySys->update();
 
   FpsCount(dt);
   tight_loop_contents();
 }
 
-extern "C" char *sbrk(int incr);
-
-int freeMemory()
-{
-  char stack_dummy = 0;
-  return &stack_dummy - sbrk(0);
-}
-void FpsCount(float dt)
-{
-  callsPerSecond++;
-  currentMillis += dt;
-  if (currentMillis >= 1000)
-  {
-    Serial.print("FPS CPU0: ");
-    Serial.print(callsPerSecond);
-    Serial.print(" ||  FPS CPU1: ");
-    Serial.print(callsPerSecond1);
-    Serial.print(" Память: ");
-    Serial.println(abs(freeMemory()));
-    callsPerSecond = 0;
-    currentMillis = 0;
-    clear1 = true;
-  }
-}
 // ================================================================
 // ЯДРО 1 (Core 1): Занимается только моторами (Критично ко времени)
 // ================================================================
@@ -111,16 +69,4 @@ void loop1()
 
   FpsCount1(dt1);
   tight_loop_contents();
-}
-
-void FpsCount1(float dt)
-{
-  callsPerSecond1++;
-  currentMillis1 += dt;
-  if (clear1)
-  {
-    callsPerSecond1 = 0;
-    currentMillis1 = 0;
-    clear1 = false;
-  }
 }
