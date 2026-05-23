@@ -7,44 +7,53 @@ void MenuController::update(float dt)
     // 1. Опрашиваем ИК-пульт
     ButtonIR btn = IRSensor::getInstance().GetSensorState();
 
-    if (btn == ButtonUp)
-        currentMenu->prev();
-    if (btn == ButtonDown)
-        currentMenu->next();
-
-    if (btn == ButtonOk)
+    if (!currentMenu->getInfoFlag())
     {
-        Serial.println("Нажата кнопка ОК!"); // Тест: долетает ли сигнал от ИК?
+        if (btn == ButtonUp)
+            currentMenu->prev();
+        if (btn == ButtonDown)
+            currentMenu->next();
 
-        int idx = currentMenu->getCurrentIndex();
-        MenuItem item = currentMenu->getItem(idx);
-
-        if (item.type == ACTION)
+        if (btn == ButtonOk)
         {
-            item.action(); // Выполняем команду
-        }
-        else if (item.type == SUBMENU)
-        {
-            if (historyIndex < MAX_DEPTH)
-            {
-                menuHistory[historyIndex] = currentMenu; // Запомнили, где стоим
-                historyIndex++;                          // Сдвинули указатель вверх
+            Serial.println("Нажата кнопка ОК!"); // Тест: долетает ли сигнал от ИК?
 
-                currentMenu = item.nextMenu; // Прыгнули внутрь
-                currentMenu->resetTimer();
-                show();
-            }
-            else
+            int idx = currentMenu->getCurrentIndex();
+            MenuItem item = currentMenu->getItem(idx);
+
+            if (item.type == ACTION)
             {
-                Serial.println("Ошибка: Стек меню переполнен!");
+                item.action(); // Выполняем команду
             }
+            else if (item.type == SUBMENU)
+            {
+                if (historyIndex < MAX_DEPTH)
+                {
+                    menuHistory[historyIndex] = currentMenu; // Запомнили, где стоим
+                    historyIndex++;                          // Сдвинули указатель вверх
+
+                    currentMenu = item.nextMenu; // Прыгнули внутрь
+                    currentMenu->resetTimer();
+                    show();
+                }
+                else
+                {
+                    Serial.println("Ошибка: Стек меню переполнен!");
+                }
+            }
+            // else if (item.type == ItemType::NO)
+            //     btn = ButtonIR::NOOL;
+            else if (item.type == INFO)
+                currentMenu->setInfoFlag(true);
         }
-        else if (item.type == ItemType::NO)
-            btn = ButtonIR::NOOL;
     }
-
     if (btn == ButtonLeft)
     {
+        if (currentMenu->getInfoFlag())
+        {
+            currentMenu->setInfoFlag(false);
+            return;
+        }
         if (historyIndex > 0)
         {
             historyIndex--;                          // Сдвигаем указатель вниз
@@ -78,8 +87,8 @@ void MenuController::back()
 void MenuController::show()
 {
     int header = 0;
-    if(currentMenu->IsHeader())   
-    header = currentMenu->getHeaderSize();
+    if (currentMenu->IsHeader())
+        header = currentMenu->getHeaderSize();
     int availableHeight = 64 - header * currentMenu->getitemHeight();
     Serial.print("availableHeight: ");
     Serial.println(availableHeight);

@@ -22,15 +22,19 @@ void StateStartV2::enter()
     menu1->addHeader("Main MENU:", 2);
     menu1->addItem("Sensors test.", menu2);
     menu1->addItem("Settings.", Null);
-    menu1->addItem("Exit MENU.", [this](){this->exitMenu();});
+    menu1->addItem("Exit MENU.", [this]()
+                   { this->exitMenu(); });
 
-    
     menu2->addHeader("  SENSORS TEST:");
     menu2->enableInverseHeader();
-    menu2->addItem("Battary sensor.");
-    menu2->addItem("Compass sensor.");
-    menu2->addItem("Ultrasonic sensor.");
-    menu2->addItem("Back MENU.", [this](){back();});
+    menu2->addItem("Battary sensor.", [this]()
+                   { infoBat(); }, INFO);
+    menu2->addItem("Compass sensor.", [this]()
+                   { сompassTest(); }, INFO);
+    menu2->addItem("Ultrasonic sensor.", [this]()
+                   { ultrasonicTest(); }, INFO);
+    menu2->addItem("Back MENU.", [this]()
+                   { back(); });
 
     menu = new MenuController(menu1);
 }
@@ -42,7 +46,10 @@ void StateStartV2::update(float dt)
         Draw(dt);
     }
     else
+    {
+        MovementModule::getInstance().update(dt);
         menu->update(dt);
+    }
 }
 void StateStartV2::IrLogic()
 {
@@ -80,19 +87,23 @@ void StateStartV2::Draw(float dt)
         timer = 1000;
     }
 }
-StateStartV2::~StateStartV2() {
+StateStartV2::~StateStartV2()
+{
     // 1. Первым удаляем контроллер, так как он больше не должен управлять экраном
-    if (menu != nullptr) {
-        delete menu; 
+    if (menu != nullptr)
+    {
+        delete menu;
         menu = nullptr;
     }
 
     // 2. Вторым удаляем само меню, которое было передано в контроллер
-    if (menu1 != nullptr) {
+    if (menu1 != nullptr)
+    {
         delete menu1;
         menu1 = nullptr;
     }
-    if (menu2 != nullptr) {
+    if (menu2 != nullptr)
+    {
         delete menu2;
         menu2 = nullptr;
     }

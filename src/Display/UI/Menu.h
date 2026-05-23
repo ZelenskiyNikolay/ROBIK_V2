@@ -10,18 +10,18 @@ enum ItemType
 {
     NO,
     ACTION,
-    SUBMENU
+    SUBMENU,
+    INFO
 };
-class Menu; //Такой класс существует
+class Menu; // Такой класс существует
 // Структура одного пункта меню
 struct MenuItem
 {
     const char *title; // Название пункта
     ItemType type;
 
-    Menu *nextMenu = nullptr;          // Сразу даем дефолтное значение
+    Menu *nextMenu = nullptr;               // Сразу даем дефолтное значение
     std::function<void()> action = nullptr; // Сразу даем дефолтное значение
-
 };
 
 class Menu
@@ -34,6 +34,7 @@ public:
     void prev();
     bool addItem(const char *title, Menu *nextMenu = nullptr);
     bool addItem(const char *title, std::function<void()> action); // void (*action)() = nullptr);
+    bool addItem(const char *title, std::function<void()> action, ItemType type);
     void addHeader(const char *Title, int size = 1)
     {
         headerTitle = Title;
@@ -79,7 +80,8 @@ public:
         noCursorBitmapX = X;
         noCursorBitmapY = Y;
     }
-
+    void setInfoFlag(bool info){isInfoSelected = info;}
+    bool getInfoFlag(){return isInfoSelected;}
 private:
     void ProcessDraw(int i);
     MenuItem items[MAX_MENU_ITEMS]; // Статический массив в памяти класса (без new/delete)
@@ -115,6 +117,8 @@ private:
     char buffer[32];
     int header = 0;
     int screenWidth = 127; // Ширина OLED дисплея
+
+    bool isInfoSelected = false;
 
     DisplayOled *display;
 };

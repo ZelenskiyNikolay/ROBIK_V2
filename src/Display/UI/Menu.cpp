@@ -73,7 +73,7 @@ bool Menu::addItem(const char *title, Menu *nextMenu)
     count++;
     return true;
 }
-bool Menu::addItem(const char *title, std::function<void()> action) // void (*action)())
+bool Menu::addItem(const char *title, std::function<void()> action)
 {
     if (count >= MAX_MENU_ITEMS)
     {
@@ -85,6 +85,24 @@ bool Menu::addItem(const char *title, std::function<void()> action) // void (*ac
     {
         items[count].action = {action};
         items[count].type = ACTION;
+    }
+    else
+        items[count].type = NO;
+    count++;
+    return true;
+}
+bool Menu::addItem(const char *title, std::function<void()> action, ItemType type)
+{
+    if (count >= MAX_MENU_ITEMS)
+    {
+        // Массив полон
+        return false;
+    }
+    items[count].title = {title};
+    if (action != nullptr)
+    {
+        items[count].action = {action};
+        items[count].type = type;
     }
     else
         items[count].type = NO;
@@ -131,6 +149,11 @@ void Menu::Draw(float dt)
     if (timer > 0)
         return;
     timer = UpDraw;
+    if (isInfoSelected)
+    {
+        items[currentIndex].action();
+        return;
+    }
     display->clear();
 
     if (isHeaderMenu && headerTitle != nullptr)

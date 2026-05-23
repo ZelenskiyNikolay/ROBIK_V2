@@ -12,6 +12,9 @@
 #include "Core/EventBus.h"
 #include "Sensors/IRSensor.h"
 
+#include "Sensors/Compass.h"
+#include "MOVE/MovementModule.h"
+
 class StateStartV2 : public State
 {
 public:
@@ -34,6 +37,9 @@ private:
     //Методы мено:
     void exitMenu();
     void back();
+    void infoBat();
+    void сompassTest();
+    void ultrasonicTest();
 
     const float ApdateTimeConst = 30000;
     float timer;
