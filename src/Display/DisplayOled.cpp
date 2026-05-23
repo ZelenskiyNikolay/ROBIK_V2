@@ -13,9 +13,9 @@ void DisplayOled::clear()
 
 void DisplayOled::nightMod(bool night){display->dim(night);}
 
-void DisplayOled::drawText(const char *text, int x, int y, int size)
+void DisplayOled::drawText(const char *text, int x, int y, int size, uint16_t color)
 {
-    display->setTextColor(SSD1306_WHITE);
+    display->setTextColor(color);
     display->setTextSize(size);
     display->setCursor(x, y);
     display->print(text);
@@ -71,6 +71,10 @@ void DisplayOled::println(char str)
 {
     display->println(str);
 }
+void DisplayOled::drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, uint16_t color)
+{
+    display->drawBitmap(x, y, bitmap, w, h, color);
+}
 void DisplayOled::update()
 {
     if (NeedUpdate)
@@ -79,3 +83,4 @@ void DisplayOled::update()
         NeedUpdate = false;
     }
 }
+

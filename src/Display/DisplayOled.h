@@ -7,7 +7,7 @@ public:
     DisplayOled(Adafruit_SSD1306 &d);
     bool NeedUpdate;
 
-    void drawText(const char *text, int x, int y, int size = 1);
+    void drawText(const char *text, int x, int y, int size = 1, uint16_t color = SSD1306_WHITE);
     void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color = SSD1306_WHITE);
     void fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
     void drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
@@ -21,6 +21,7 @@ public:
     void nightMod(bool night = true);
     void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
     void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
+    void drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, uint16_t color);
 
     void clear();
     void update();
