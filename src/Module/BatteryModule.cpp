@@ -1,12 +1,8 @@
 #include "BatteryModule.h"
 
-void BatteryModule::begin(uint8_t pin, uint8_t charge_pin)
+void BatteryModule::begin()
 {
-    this->pin = pin;
-    this->charge_pin = charge_pin;
-    pinMode(charge_pin, INPUT_PULLDOWN);
-    adc_gpio_init(pin);
-    analogReadResolution(12);
+    voltage = 0;
 }
 
 void BatteryModule::update(float dt)
@@ -19,40 +15,8 @@ void BatteryModule::update(float dt)
 
     timer = timeUpdate;
 
-    adc_run(false); // 1. Ставим микрофон на паузу
-
-    // Определяем канал (пин 26 = 0, 27 = 1 и т.д.)
-    adc_select_input(this->pin - 26); // 2. Явно переключаемся на АКБ
-
-    // чистим FIFO
-    adc_fifo_drain();
-
-    // даем стабилизироваться
-    sleep_us(50);
-
-    long sum = 0;
-    for (int i = 0; i < 8; i++)
-    {
-        adc_read();
-    } // 3. Холостой замер (сливаем остатки звука)
-
-    for (int i = 0; i < 16; i++)
-    { // берем 16 замеров подряд
-        sum += adc_read();
-    }
-    int raw = sum / 16;
-
-    adc_select_input(1); // 5. ВОЗВРАЩАЕМ АЦП микрофону (пин 27)
-    adc_run(true);       // 6. Снова запускаем микрофонный конвейер
-    // ------------------------------------------
-
-    float temp = ((raw / 4095.0f) * 3.3f * 2.0f) * BAT_CAL;
-    float delta = voltage - temp;
-    if (abs(delta) < 0.2)
-        voltage = (voltage * 0.8) + (temp * 0.2);
-
-    if (abs(delta) > 2)
-        voltage = temp;
+    byte tmp = readRegister(REG_BAT_LEVEL);
+    voltage = tmp / 50.0f;
 
     if (voltage < 1.0f)
     {
@@ -68,7 +32,10 @@ void BatteryModule::update(float dt)
 
 bool BatteryModule::IsChargeConect() const
 {
-    return digitalRead(charge_pin);
+    byte tmp = readRegister(REG_SYS_STATUS);
+
+    bool c  = getBit(tmp, CHARGE);
+    return c;
 }
 
 float BatteryModule::getVoltage() const
