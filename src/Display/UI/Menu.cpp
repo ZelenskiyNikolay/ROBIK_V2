@@ -119,8 +119,10 @@ void Menu::ProcessDraw(int i)
         if (isEditMode)
         {
             items[currentIndex].action();
-       
-            sprintf(buffer, ">%s %s", items[i].title, editModeEmpty); // Активный пункт
+            if (isEditModeTitel)
+                sprintf(buffer, ">%s %s", items[i].title, editModeEmpty); // Активный пункт
+            else
+                sprintf(buffer, "> %s", editModeEmpty); // Активный пункт
         }
         else
         {
@@ -154,15 +156,17 @@ void Menu::ProcessDraw(int i)
 }
 void Menu::Draw(float dt)
 {
-    timer -= dt;
-    if (timer > 0)
-        return;
-    timer = UpDraw;
     if (isInfoSelected)
     {
         items[currentIndex].action();
         return;
     }
+
+    timer -= dt;
+    if (timer > 0)
+        return;
+    timer = UpDraw;
+
     display->clear();
 
     if (isHeaderMenu && headerTitle != nullptr)
@@ -172,7 +176,7 @@ void Menu::Draw(float dt)
 
         if (isInverseHeader)
         {
-            display->fillRect(0, 0, screenWidth, header * itemHeight-1, SSD1306_WHITE);
+            display->fillRect(0, 0, screenWidth, header * itemHeight - 1, SSD1306_WHITE);
             display->drawText(buffer, 1, 1, titleSize, SSD1306_BLACK);
         }
         else

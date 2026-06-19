@@ -1,13 +1,22 @@
 #include "MenuController.h"
 
+void MenuController::ClickUpdate(ButtonIR btn)
+{
+    if (btn == ButtonUp || btn == ButtonDown || btn == ButtonOk)
+    {
+        byte b = click.getFXMenu();
+        writeRegister(REG_SOUND_FX, b);
+        writeRegister(REG_I2C_SOUND, true);
+    }
+}
 void MenuController::update(float dt)
 {
     if (!isActive)
         return;
     // 1. Опрашиваем ИК-пульт
     ButtonIR btn = IRSensor::getInstance().GetSensorState();
-
-    if (currentMenu->getEditMode())
+    ClickUpdate(btn);
+    if (currentMenu->getEditMode()||currentMenu->getInfoFlag())
     {
         if (btn == ButtonUp)
             currentMenu->setAction(PREV);
@@ -16,7 +25,7 @@ void MenuController::update(float dt)
         else if (btn == ButtonOk)
             currentMenu->setAction(OK);
     }
-    
+
     if (!currentMenu->getInfoFlag() && !currentMenu->getEditMode())
     {
         if (btn == ButtonUp)
@@ -62,7 +71,7 @@ void MenuController::update(float dt)
                 currentMenu->setEditMode(true);
         }
     }
-    
+
     if (btn == ButtonLeft)
     {
         if (currentMenu->getEditMode())

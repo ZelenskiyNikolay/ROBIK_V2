@@ -94,7 +94,8 @@ public:
     void setEditMode(bool EditMode) { isEditMode = EditMode; }
     bool getEditMode() { return isEditMode; }
 
-    void setEditModeEmpty(const char *Val) { sprintf(editModeEmpty, "%s", Val); }
+    void setEditModeEmpty(const char *Val,bool Is_Title_Print = true) 
+    { sprintf(editModeEmpty, "%s", Val); isEditModeTitel = Is_Title_Print;}
     Action getAction(){Action tmp = action; action = NO_ACTION; return tmp;}
     void setAction(Action a){action = a;}
 private:
@@ -129,13 +130,14 @@ private:
     int maxVisibleItems;
     int sliderHeight;
 
-    char buffer[32];
+    char buffer[64];
     int header = 0;
     int screenWidth = 127; // Ширина OLED дисплея
 
     bool isInfoSelected = false;
     bool isEditMode = false;
-    char editModeEmpty[16] = ">TEST<";
+    bool isEditModeTitel = true;
+    char editModeEmpty[32] = ">TEST<";
     Action action = NO_ACTION;
 
     DisplayOled *display;
