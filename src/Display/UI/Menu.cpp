@@ -116,19 +116,28 @@ void Menu::ProcessDraw(int i)
         row -= topIndex;
     if (i == currentIndex)
     {
-        if (isBitmapCursor)
-            sprintf(buffer, "  %s ", items[i].title); // Активный пункт
-        else
-            sprintf(buffer, "%s%s ", cursorSign, items[i].title); // Активный пункт
-        if (isFrameMode)
+        if (isEditMode)
         {
-            int pointY = (row * 10) - 2;
-            display->drawRect(0, pointY, screenWidth, itemHeight * itemTextSize, SSD1306_WHITE);
+            items[currentIndex].action();
+       
+            sprintf(buffer, ">%s %s", items[i].title, editModeEmpty); // Активный пункт
         }
-        else if (isInverse)
+        else
         {
-            int pointY = (row * 10) - 2;
-            display->fillRect(0, pointY, screenWidth, itemHeight * itemTextSize, SSD1306_WHITE);
+            if (isBitmapCursor)
+                sprintf(buffer, "  %s ", items[i].title); // Активный пункт
+            else
+                sprintf(buffer, "%s%s ", cursorSign, items[i].title); // Активный пункт
+            if (isFrameMode)
+            {
+                int pointY = (row * 10) - 2;
+                display->drawRect(0, pointY, screenWidth, itemHeight * itemTextSize, SSD1306_WHITE);
+            }
+            else if (isInverse)
+            {
+                int pointY = (row * 10) - 2;
+                display->fillRect(0, pointY, screenWidth, itemHeight * itemTextSize, SSD1306_WHITE);
+            }
         }
     }
     else
@@ -163,7 +172,7 @@ void Menu::Draw(float dt)
 
         if (isInverseHeader)
         {
-            display->fillRect(0, 0, screenWidth, header * itemHeight, SSD1306_WHITE);
+            display->fillRect(0, 0, screenWidth, header * itemHeight-1, SSD1306_WHITE);
             display->drawText(buffer, 1, 1, titleSize, SSD1306_BLACK);
         }
         else

@@ -34,7 +34,7 @@ void StateCalibration::ProcessCalibration(float dt)
         {
             MovementModule::getInstance().NewMov(MotionState::BACKWARD, 0.2, 0.2);
             steep_calibration++;
-            timer1 = 1000;
+            timer1 = 2000;
             return;
         }
     }
@@ -135,10 +135,10 @@ void StateCalibration::Draw(float dt)
         display->drawText("Calibration:", 0, 0, 1);
         drawCompassIcon(110, 25, *display);
         char buffer[32];
-        sprintf(buffer, "Аng: %d cm", MovementModule::getInstance().SouthAngle);
-        display->drawText(buffer, 0, 55, 1);
         sprintf(buffer, "Dis: %d cm", (int)distance);
         display->drawText(buffer, 0, 35, 1);
+        sprintf(buffer, "Ang: %d cm", MovementModule::getInstance().SouthAngle);
+        display->drawText(buffer, 0, 55, 1);
 
         timer = 500;
     }

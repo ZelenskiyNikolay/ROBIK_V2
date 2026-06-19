@@ -2,6 +2,7 @@
 #include "Motor.h"
 #include "MOVE/Motion.h"
 #include "MOVE/Tics.h"
+#include "MOVE/Map.h"
 //#include "Sensors/Compass.h"
 // #include "MotorModule.h"
 // #include "Sensors/RPM_sensor.h"

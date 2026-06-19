@@ -11,7 +11,7 @@ void DisplayOled::clear()
     display->clearDisplay();
 }
 
-void DisplayOled::nightMod(bool night){display->dim(night);}
+void DisplayOled::nightMod(bool night){display->dim(night); isNightMod = night;}
 
 void DisplayOled::drawText(const char *text, int x, int y, int size, uint16_t color)
 {

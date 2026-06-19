@@ -18,10 +18,11 @@ void StateStartV2::enter()
 
     menu1 = new Menu(*display);
     menu2 = new Menu(*display);
+    menu3 = new Menu(*display);
 
     menu1->addHeader("Main MENU:", 2);
     menu1->addItem("Sensors test.", menu2);
-    menu1->addItem("Settings.", Null);
+    menu1->addItem("Settings.", menu3);
     menu1->addItem("Exit MENU.", [this]()
                    { this->exitMenu(); });
 
@@ -34,6 +35,14 @@ void StateStartV2::enter()
     menu2->addItem("Ultrasonic sensor.", [this]()
                    { ultrasonicTest(); }, INFO);
     menu2->addItem("Back MENU.", [this]()
+                   { back(); });
+
+
+    menu3->addHeader("  Settings:");
+    menu3->enableInverseHeader();
+    menu3->addItem("Sound Volume",[this](){SetSoundVolume();},EDIT_ITEM);
+    menu3->addItem("Night mod",[this](){SetNightMod();},EDIT_ITEM);
+    menu3->addItem("Back MENU.", [this]()
                    { back(); });
 
     menu = new MenuController(menu1);
@@ -106,5 +115,10 @@ StateStartV2::~StateStartV2()
     {
         delete menu2;
         menu2 = nullptr;
+    }
+    if (menu3 != nullptr)
+    {
+        delete menu3;
+        menu3 = nullptr;
     }
 }

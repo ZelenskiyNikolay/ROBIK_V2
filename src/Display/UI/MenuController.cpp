@@ -7,7 +7,17 @@ void MenuController::update(float dt)
     // 1. Опрашиваем ИК-пульт
     ButtonIR btn = IRSensor::getInstance().GetSensorState();
 
-    if (!currentMenu->getInfoFlag())
+    if (currentMenu->getEditMode())
+    {
+        if (btn == ButtonUp)
+            currentMenu->setAction(PREV);
+        else if (btn == ButtonDown)
+            currentMenu->setAction(NEXT);
+        else if (btn == ButtonOk)
+            currentMenu->setAction(OK);
+    }
+    
+    if (!currentMenu->getInfoFlag() && !currentMenu->getEditMode())
     {
         if (btn == ButtonUp)
             currentMenu->prev();
@@ -44,11 +54,22 @@ void MenuController::update(float dt)
             // else if (item.type == ItemType::NO)
             //     btn = ButtonIR::NOOL;
             else if (item.type == INFO)
+            {
                 currentMenu->setInfoFlag(true);
+                currentMenu->resetTimer();
+            }
+            else if (item.type == EDIT_ITEM)
+                currentMenu->setEditMode(true);
         }
     }
+    
     if (btn == ButtonLeft)
     {
+        if (currentMenu->getEditMode())
+        {
+            currentMenu->setEditMode(false);
+            return;
+        }
         if (currentMenu->getInfoFlag())
         {
             currentMenu->setInfoFlag(false);

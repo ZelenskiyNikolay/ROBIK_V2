@@ -8,6 +8,7 @@ void StateStartV2::exitMenu()
 void StateStartV2::back()
 {
     menu->back();
+    timer = 0;
 }
 
 void StateStartV2::infoBat()
@@ -61,11 +62,57 @@ void StateStartV2::ultrasonicTest()
 {
     float dis = MovementModule::getInstance().GetDistance();
     display->clear();
-    
+
     display->drawText("Ultrasinic", 0, 0, 2);
     display->drawText("Test:", 0, 20, 2);
     char buffer[16];
 
     sprintf(buffer, "D:%.1f%s", dis, "CM");
     display->drawText(buffer, 0, 44, 2);
+}
+void StateStartV2::SetNightMod()
+{
+    Action a = menu3->getAction();
+    bool night = display->IsNightMod();
+
+    if (a == NEXT || a == PREV)
+    {
+        night = !night;
+        display->nightMod(night);
+    }
+    else if (a == OK)
+    {
+        menu3->setEditMode(false);
+        menu3->resetTimer();
+    }
+    char buf[16];
+    sprintf(buf, ">%s<", night ? "true" : "false");
+    menu3->setEditModeEmpty(buf);
+}
+int Vol = 100;
+void StateStartV2::SetSoundVolume()
+{
+    Action a = menu3->getAction();
+
+    if (a == NEXT)
+    {
+        if(Vol>0)
+            Vol-=5;
+    }
+    else if (a == PREV)
+    {
+        if(Vol<100)
+            Vol+=5;
+    }
+    else if (a == OK)
+    {
+        //SoundManager->SetVolume(Val) это не реализовано.. 
+
+        menu3->setEditMode(false);
+        menu3->resetTimer();
+    }
+
+    char buf[16];
+    sprintf(buf, ">%d%s<", Vol,"%");
+    menu3->setEditModeEmpty(buf);
 }

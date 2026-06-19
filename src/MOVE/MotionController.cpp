@@ -11,6 +11,7 @@ void MotionController::begin()
     digitalWrite(EN_PIN, HIGH);
     motorL.begin(); // Выполнит pinMode
     motorR.begin();
+    Map::getInstance();
 }
 
 void MotionController::MoveSpeed(bool HiSpeed)
@@ -73,11 +74,13 @@ void MotionController::NewMov(MotionState Command, float Left, float Right)
         command.targetLeft = STEPS_90;
         command.targetRight = STEPS_90;
         command.type = Command;
+        Map::getInstance().RotateLeft90();
         break;
     case MotionState::TURN_RIGHT90:
         command.targetLeft = STEPS_90;
         command.targetRight = STEPS_90;
         command.type = Command;
+        Map::getInstance().RotateRight90();
         break;
     }
     Serial.print("Move type: ");
@@ -231,6 +234,7 @@ void MotionController::ForwardMov()
         command.targetLeft--;
         motorL.Step(false);
         motorL.AddTics(false);
+        Map::getInstance().MovSteep();
     }
 
     if (motorR.Idel())
@@ -248,6 +252,7 @@ void MotionController::BackwardMov()
         command.targetLeft--;
         motorL.Step(true);
         motorL.AddTics();
+        Map::getInstance().MovSteep(false);
     }
 
     if (motorR.Idel())

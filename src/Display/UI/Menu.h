@@ -6,12 +6,20 @@
 // Ограничение: максимум 20 пунктов в одном меню
 #define MAX_MENU_ITEMS 20
 
+enum Action
+{
+    NO_ACTION,
+    NEXT,
+    PREV,
+    OK
+};
 enum ItemType
 {
     NO,
     ACTION,
     SUBMENU,
-    INFO
+    INFO,
+    EDIT_ITEM
 };
 class Menu; // Такой класс существует
 // Структура одного пункта меню
@@ -54,7 +62,7 @@ public:
     void enableInverse() { isInverse = true; }
     void enableInverseHeader() { isInverseHeader = true; }
 
-    void resetTimer() { timer = 0; }
+    void resetTimer(float val = 0) { timer = val; }
     int getCurrentIndex() { return currentIndex; }
     MenuItem getItem(int index) { return items[index]; }
 
@@ -80,8 +88,15 @@ public:
         noCursorBitmapX = X;
         noCursorBitmapY = Y;
     }
-    void setInfoFlag(bool info){isInfoSelected = info;}
-    bool getInfoFlag(){return isInfoSelected;}
+    void setInfoFlag(bool info) { isInfoSelected = info; }
+    bool getInfoFlag() { return isInfoSelected; }
+
+    void setEditMode(bool EditMode) { isEditMode = EditMode; }
+    bool getEditMode() { return isEditMode; }
+
+    void setEditModeEmpty(const char *Val) { sprintf(editModeEmpty, "%s", Val); }
+    Action getAction(){Action tmp = action; action = NO_ACTION; return tmp;}
+    void setAction(Action a){action = a;}
 private:
     void ProcessDraw(int i);
     MenuItem items[MAX_MENU_ITEMS]; // Статический массив в памяти класса (без new/delete)
@@ -119,6 +134,9 @@ private:
     int screenWidth = 127; // Ширина OLED дисплея
 
     bool isInfoSelected = false;
+    bool isEditMode = false;
+    char editModeEmpty[16] = ">TEST<";
+    Action action = NO_ACTION;
 
     DisplayOled *display;
 };

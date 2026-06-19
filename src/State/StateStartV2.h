@@ -40,7 +40,9 @@ private:
     void infoBat();
     void сompassTest();
     void ultrasonicTest();
-
+    void SetNightMod();
+    void SetSoundVolume();
+    
     const float ApdateTimeConst = 30000;
     float timer;
     float _timerPoint;
@@ -54,5 +56,6 @@ private:
 
     Menu *menu1 = nullptr;
     Menu *menu2 = nullptr;
+    Menu *menu3 = nullptr;
     MenuController *menu = nullptr;
 };

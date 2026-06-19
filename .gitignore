@@ -4,4 +4,7 @@
 .vscode/launch.json
 .vscode/ipch
 DATA/
+DATA/board_Lay
 lib/
+DATA/board_Lay/Power_board.bak
+DATA/board_Lay/Power_board.lay
