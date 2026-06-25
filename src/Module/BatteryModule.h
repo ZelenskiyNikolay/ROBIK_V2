@@ -15,7 +15,9 @@ public:
     void begin();
     void update(float dt);
     float getVoltage() const;
-    bool IsChargeConect() const;
+    bool IsInPower() const;
+    bool IsCharging() const;
+    bool IsBatFull() const;
     int getBatteryPercent();
     void drawBatteryIcon(DisplayOled &display, int x, int y, int percent);
 private:
@@ -23,7 +25,12 @@ private:
     uint8_t pin;
     uint8_t charge_pin;
     bool _is_charge_conect = false;
+    bool _is_full = false;
+    bool _is_charging = false;
     float voltage = 0.0f;
     unsigned long timer;
     unsigned long timeUpdate = 10000;
+    float timer2;
+    float timeUpdate2 = 500;
+    const float VOLTAGE_DIVIDER = 50.0f;
 };

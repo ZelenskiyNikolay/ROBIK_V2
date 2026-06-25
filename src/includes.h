@@ -15,6 +15,7 @@
 
 #include "Core/FSM.h"
 #include "State/StateStartV2.h"
+#include "State/StateStart.h"
 
 #include "Sound/SoundModule.h"
 #include "Sound/SoundManager.h"

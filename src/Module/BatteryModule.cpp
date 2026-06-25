@@ -9,14 +9,22 @@ void BatteryModule::update(float dt)
 {
 
     timer -= dt;
-
+    timer2 -= dt;
+    if(timer2<0)
+    {
+        timer2 = timeUpdate2;
+        byte tmp = readRegister(REG_SYS_STATUS);
+        _is_charge_conect  = getBit(tmp, IN_POWER);
+        _is_charging  = getBit(tmp, CHARGE);
+        _is_full  = getBit(tmp, FULL);
+    }
     if (timer > 0)
         return; // обновление раз в 20 секунд
 
     timer = timeUpdate;
 
     byte tmp = readRegister(REG_BAT_LEVEL);
-    voltage = tmp / 50.0f;
+    voltage = tmp / VOLTAGE_DIVIDER;
 
     if (voltage < 1.0f)
     {
@@ -29,14 +37,14 @@ void BatteryModule::update(float dt)
         Serial.println(" V");
     }
 }
+bool BatteryModule::IsInPower() const
+{   return _is_charge_conect;}
 
-bool BatteryModule::IsChargeConect() const
-{
-    byte tmp = readRegister(REG_SYS_STATUS);
+bool BatteryModule::IsCharging() const
+{   return _is_charging;}
 
-    bool c  = getBit(tmp, CHARGE);
-    return c;
-}
+bool BatteryModule::IsBatFull() const
+{   return _is_full;}
 
 float BatteryModule::getVoltage() const
 {
