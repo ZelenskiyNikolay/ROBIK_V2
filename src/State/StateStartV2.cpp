@@ -11,7 +11,7 @@ void StateStartV2::enter()
     timer = 0;
 
     display->drawText("  ROBIK", 0, 0, 2);
-    display->drawText("              v2.5+", 0, 20, 1);
+    display->drawText("              v2.6", 0, 20, 1);
 
     display->drawText("press 1 to Start.", 0, 46, 1);
     display->drawText("press # to menu.", 0, 56, 1);
@@ -157,7 +157,7 @@ void StateStartV2::Draw(float dt)
             display->clear();
 
             display->drawText("  ROBIK", 0, 0, 2);
-            display->drawText("              v2.5+", 0, 20, 1);
+            display->drawText("              v2.6", 0, 20, 1);
 
             display->drawText("press 1 to Start.", 0, 46, 1);
             display->drawText("press # to menu.", 0, 56, 1);
