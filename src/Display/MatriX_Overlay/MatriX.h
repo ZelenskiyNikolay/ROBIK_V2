@@ -5,6 +5,7 @@
 #include "Sprites.h"
 #include "Core/timer.h"
 #include "Flow.h"
+#include "Module/RTCModule.h"
 
 #define MAX_FLOWS 30
 class Matrix
@@ -14,6 +15,7 @@ private:
     Flow F[MAX_FLOWS];
     float timer = 0;
     float timer2 = 300;
+    float timer3 = 600;
     DisplayOled *disp;
 
 public:
@@ -31,6 +33,7 @@ public:
         _collFlows = 15;
         timer = 0;
         timer2 = 300;
+        timer3 = 600;
         for (int i = 0; i < MAX_FLOWS; i++)
             F[i].Init(random(10, 50), random(1, 120), random(1, 9), *disp);
     }
@@ -65,6 +68,23 @@ public:
         {
             _collFlows = MAX_FLOWS;
         }
+        if (timer3 < 0)
+        {
+            DateTime _time = RTCModule::getInstance().getTime();
+            char buffer[9]; // "HH:MM"
+
+            auto second = _time.second();
+            if (second % 2 == 0)
+                sprintf(buffer, "%02d:%02d", _time.hour(), _time.minute());
+            else
+                sprintf(buffer, "%02d %02d", _time.hour(), _time.minute());
+            disp->drawText(buffer, 88, 0, 1);
+        }
+        else
+        {
+            timer3 -= dt;
+        }
+
         disp->NeedUpdate = true;
         timer = 100;
     }

@@ -3,8 +3,13 @@
 void setup()
 {
   Serial.begin(9600);
+
   SPI.begin();
   delay(200); // дать питанию и SPI стабилизироваться
+
+  Wire1.setSDA(2);
+  Wire1.setSCL(3);
+  Wire1.begin();
 
   randomSeed(analogRead(A3));
 

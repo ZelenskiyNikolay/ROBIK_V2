@@ -1,6 +1,43 @@
 #include "Menu.h"
 
+Menu::Menu()
+{
+    count = 0;
+    currentIndex = 0;
+    itemHeight = 10;
+    itemTextSize = 1;
+    cursorBitmap = nullptr;
+    isBitmapCursor = false;
+    isFrameMode = false;
+    isInverse = false;
+    isHeaderMenu = false;
+    titleSize = 0;
+    isInverseHeader = false;
+    isScrollable = false;
+    topIndex = 0;
+    maxVisibleItems = 4;
+    sliderHeight = 10;
+    display = nullptr;
+    action = NO_ACTION;
+}
 Menu::Menu(DisplayOled &disp) : display(&disp) {}
+
+void Menu::Clear()
+{
+    count = 0;          // Обнуляем количество элементов (старые данные просто перезапишутся)
+    currentIndex = 0;   // Сбрасываем курсор в начало
+    topIndex = 0;       // Сбрасываем скролл
+    isHeaderMenu = false; // Если новый экран будет без хедера
+    
+    // На всякий случай зануляем экшены std::function, чтобы освободить ресурсы
+    for (int i = 0; i < MAX_MENU_ITEMS; i++)
+    {
+        items[i].title = nullptr;
+        items[i].action = nullptr;
+        items[i].nextMenu = nullptr;
+        items[i].type = NO;
+    }
+}
 
 void Menu::next()
 {

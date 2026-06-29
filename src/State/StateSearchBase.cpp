@@ -30,7 +30,7 @@ void StateSearchBase::update(float dt)
 float timer1 = 0;
 void StateSearchBase::AutoSearchBase(float dt)
 {
-    if (BatteryModule::getInstance().IsChargeConect())
+    if (BatteryModule::getInstance().IsInPower())
     {
         MovementModule::getInstance().StopMov();
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});
@@ -153,7 +153,7 @@ void StateSearchBase::AutoSearchBase(float dt)
     }
     if (Steep == 13)
     {
-        if (BatteryModule::getInstance().IsChargeConect())
+        if (BatteryModule::getInstance().IsInPower())
         {
             MovementModule::getInstance().StopMov();
             EventBus::push({EVENT_CHANGE_STATE, STATE_START});

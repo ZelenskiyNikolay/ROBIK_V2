@@ -16,58 +16,127 @@ void StateStartV2::enter()
     display->drawText("press 1 to Start.", 0, 46, 1);
     display->drawText("press # to menu.", 0, 56, 1);
 
-    menu1 = new Menu(*display);
-    menu2 = new Menu(*display);
-    menu3 = new Menu(*display);
+    menu = &MenuController::getInstance();
+    if (!menu->IsInit)
+        menu->Init(*display);
+    CreateMainManu();
 
-    menu1->addHeader("Main MENU:", 2);
-    menu1->addItem("Sensors test.", menu2);
-    menu1->addItem("Settings.", menu3);
-    menu1->addItem("Exit MENU.", [this]()
+    // Выключаем лишние фазы питания
+    phaseControl(ENABLED,ENABLED);
+
+    matrix.Init(*display);
+    // radar.begin(25);
+    lox.begin(41U,false,&Wire1);
+    // phaseControl(ENABLED);
+}
+void StateStartV2::CreateMainManu()
+{
+    menu->hide();
+    menu->ClearAll();
+
+    menu->Menus[0].addHeader("Main MENU:", 2);
+    menu->Menus[0].addItem("Sensors test.", &menu->Menus[1]);
+    menu->Menus[0].addItem("Settings.", &menu->Menus[2]);
+    menu->Menus[0].addItem("POWER OFF", [this]()
+                   { this->powerOff(); }, INFO);
+    menu->Menus[0].addItem("Exit MENU.", [this]()
                    { this->exitMenu(); });
 
-    menu2->addHeader("  SENSORS TEST:");
-    menu2->enableInverseHeader();
-    menu2->addItem("Battary sensor.", [this]()
+    menu->Menus[1].addHeader("  SENSORS TEST:");
+    menu->Menus[1].enableInverseHeader();
+    menu->Menus[1].addItem("Battary sensor.", [this]()
                    { infoBat(); }, INFO);
-    menu2->addItem("Compass sensor.", [this]()
+    menu->Menus[1].addItem("I2C Scaner.", [this]()
+                   { I2C_Scaner(); }, INFO);
+    menu->Menus[1].addItem("Compass sensor.", [this]()
                    { сompassTest(); }, INFO);
-    menu2->addItem("Ultrasonic sensor.", [this]()
+    menu->Menus[1].addItem("Ultrasonic sensor.", [this]()
                    { ultrasonicTest(); }, INFO);
-    menu2->addItem("Back MENU.", [this]()
+    menu->Menus[1].addItem("Radar test.", [this]()
+                   { radar_Test(); }, INFO);
+    menu->Menus[1].addItem("One Measure test.", [this]()
+                   { One_Measure_Test(); }, INFO);
+    menu->Menus[1].addItem("Time test", [this]()
+                   { DrawClock(); }, INFO);
+    menu->Menus[1].addItem("Back MENU.", [this]()
                    { back(); });
 
-
-    menu3->addHeader("  Settings:");
-    menu3->enableInverseHeader();
-    menu3->addItem("Sound Volume",[this](){SetSoundVolume();},EDIT_ITEM);
-    menu3->addItem("Night mod",[this](){SetNightMod();},EDIT_ITEM);
-    menu3->addItem("Back MENU.", [this]()
+    menu->Menus[2].addHeader("Settings:", 2);
+    menu->Menus[2].enableInverseHeader();
+    menu->Menus[2].addItem("Sound Volume", [this]()
+                   { SetSoundVolume(); }, EDIT_ITEM);
+    menu->Menus[2].addItem("Night mod", [this]()
+                   { SetNightMod(); }, EDIT_ITEM);
+    menu->Menus[2].addItem("SET Click Sound", [this]()
+                   { ClickSounnd(); }, EDIT_ITEM);
+    menu->Menus[2].addItem("TEST SERVO", &menu->Menus[3]);
+    menu->Menus[2].addItem("Back MENU.", [this]()
                    { back(); });
 
-    menu = new MenuController(menu1);
+    menu->Menus[3].addHeader("Servo calibration:");
+    menu->Menus[3].enableInverseHeader();
+    menu->Menus[3].addItem("Calibrate 0'", [this]()
+                   { servo(0); }, EDIT_ITEM);
+    menu->Menus[3].addItem("Calibrate 45'", [this]()
+                   { servo(45); }, EDIT_ITEM);
+    menu->Menus[3].addItem("Calibrate 90'", [this]()
+                   { servo(90); }, EDIT_ITEM);
+    menu->Menus[3].addItem("Calibrate 135'", [this]()
+                   { servo(135); }, EDIT_ITEM);
+    menu->Menus[3].addItem("Calibrate 180'", [this]()
+                   { servo(180); }, EDIT_ITEM);
+    menu->Menus[3].addItem("Back MENU.", [this]()
+                   { back(); });
+
+    menu->SetCurentMenu(0);
 }
 void StateStartV2::update(float dt)
 {
     if (!menu->IsActive())
     {
         IrLogic();
-        Draw(dt);
+        if (!is_Screensaver_Play)
+        {
+            timer_Screensaver -= dt;
+            if (timer_Screensaver < 0)
+                is_Screensaver_Play = true;
+            Draw(dt);
+        }
+        else
+            screensaver(dt);
     }
     else
     {
-        MovementModule::getInstance().update(dt);
         menu->update(dt);
+        radar.update(dt);
     }
+
+    MovementModule::getInstance().update(dt);
+}
+void StateStartV2::screensaver(float dt)
+{
+    if (is_Screensaver_Play)
+        matrix.Update(dt);
 }
 void StateStartV2::IrLogic()
 {
-
     ButtonIR tmp = IRSensor::getInstance().GetSensorState();
+    if (tmp == NOOL)
+        return;
+    else if (is_Screensaver_Play)
+    {
+        timer_Screensaver = timeout_Screensaver;
+        is_Screensaver_Play = !is_Screensaver_Play;
+        matrix.Reset();
+    }
     switch (tmp)
     {
     case Button1:
-        EventBus::push({EVENT_CHANGE_STATE, STATE_NORMAL});
+        if (BatteryModule::getInstance().getBatteryPercent() > 80 ||
+            BatteryModule::getInstance().IsBatFull() ||
+            !BatteryModule::getInstance().IsInPower())
+            EventBus::push({EVENT_CHANGE_STATE, STATE_NORMAL});
+
         break;
     case ButtonHash:
         timer = 0;
@@ -94,31 +163,11 @@ void StateStartV2::Draw(float dt)
             display->drawText("press # to menu.", 0, 56, 1);
         }
         timer = 1000;
-    }
-}
-StateStartV2::~StateStartV2()
-{
-    // 1. Первым удаляем контроллер, так как он больше не должен управлять экраном
-    if (menu != nullptr)
-    {
-        delete menu;
-        menu = nullptr;
-    }
 
-    // 2. Вторым удаляем само меню, которое было передано в контроллер
-    if (menu1 != nullptr)
-    {
-        delete menu1;
-        menu1 = nullptr;
-    }
-    if (menu2 != nullptr)
-    {
-        delete menu2;
-        menu2 = nullptr;
-    }
-    if (menu3 != nullptr)
-    {
-        delete menu3;
-        menu3 = nullptr;
+        byte reg = readRegister(REG_SYS_CONTROL);
+        if (!getBit(reg, 2))
+        {
+            phaseControl(ENABLED);
+        }
     }
 }

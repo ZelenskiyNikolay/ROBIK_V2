@@ -35,8 +35,9 @@ struct MenuItem
 class Menu
 {
 public:
+    Menu();
     Menu(DisplayOled &disp);
-
+    void SetDisplay(DisplayOled &disp) { display = &disp; }
     void Draw(float dt);
     void next();
     void prev();
@@ -71,12 +72,16 @@ public:
     {
         maxVisibleItems = val;
         int trackHeight = (64 - 5) - (titleSize * itemHeight + 5);
-        sliderHeight = (trackHeight * maxVisibleItems) / count;
+        if (count > 0)
+            sliderHeight = (trackHeight * maxVisibleItems) / count;
+        else
+            sliderHeight = trackHeight;
     }
     void setIsScrollable(bool val) { isScrollable = val; }
     int getHeaderSize() { return titleSize; }
     int getitemHeight() { return itemHeight; }
-    void setItemHeight(int val) { itemTextSize = val; }
+    void setItemHeight(int val) { itemHeight = val; }
+    void setItemsSize(int size) { itemTextSize = size; }
     bool IsHeader() { return isHeaderMenu; }
     void setCursorBitmapSize(int X = 8, int Y = 10)
     {
@@ -94,10 +99,19 @@ public:
     void setEditMode(bool EditMode) { isEditMode = EditMode; }
     bool getEditMode() { return isEditMode; }
 
-    void setEditModeEmpty(const char *Val,bool Is_Title_Print = true) 
-    { sprintf(editModeEmpty, "%s", Val); isEditModeTitel = Is_Title_Print;}
-    Action getAction(){Action tmp = action; action = NO_ACTION; return tmp;}
-    void setAction(Action a){action = a;}
+    void setEditModeEmpty(const char *Val, bool Is_Title_Print = true)
+    {
+        sprintf(editModeEmpty, "%s", Val);
+        isEditModeTitel = Is_Title_Print;
+    }
+    Action getAction()
+    {
+        Action tmp = action;
+        action = NO_ACTION;
+        return tmp;
+    }
+    void setAction(Action a) { action = a; }
+    void Clear();
 private:
     void ProcessDraw(int i);
     MenuItem items[MAX_MENU_ITEMS]; // Статический массив в памяти класса (без new/delete)

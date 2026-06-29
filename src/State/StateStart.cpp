@@ -26,7 +26,7 @@ void StateStart::update(float dt)
 
     if (bat.getBatteryPercent() < 99)
     {
-        if (bat.IsChargeConect())
+        if (bat.IsInPower())
         {
             if (menu != BATARY_CHARGING)
             {

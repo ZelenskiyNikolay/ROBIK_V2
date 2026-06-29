@@ -1,5 +1,20 @@
 #include "MenuController.h"
 
+void MenuController::Init(DisplayOled &disp)
+{
+    display = &disp;
+    for (int i = 0; i < MENU_MEMORY_SIZE; i++)
+    {
+        Menus[i].SetDisplay(disp);
+    }
+    IsInit = true;
+}
+void MenuController::ClearAll()
+{
+    for (int i = 0; i < MENU_MEMORY_SIZE; i++)
+        Menus[i].Clear();
+    historyIndex = 0;
+}
 void MenuController::ClickUpdate(ButtonIR btn)
 {
     if (btn == ButtonUp || btn == ButtonDown || btn == ButtonOk)
@@ -16,7 +31,7 @@ void MenuController::update(float dt)
     // 1. Опрашиваем ИК-пульт
     ButtonIR btn = IRSensor::getInstance().GetSensorState();
     ClickUpdate(btn);
-    if (currentMenu->getEditMode()||currentMenu->getInfoFlag())
+    if (currentMenu->getEditMode() || currentMenu->getInfoFlag())
     {
         if (btn == ButtonUp)
             currentMenu->setAction(PREV);
@@ -116,6 +131,12 @@ void MenuController::back()
 
 void MenuController::show()
 {
+    if (!currentMenu)
+        return; // Защита от нулевого указателя
+
+    if (currentMenu->getitemHeight() <= 0)
+        currentMenu->setItemHeight(10);
+
     int header = 0;
     if (currentMenu->IsHeader())
         header = currentMenu->getHeaderSize();

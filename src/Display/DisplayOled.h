@@ -28,6 +28,8 @@ public:
     void clear();
     void update();
 
+    int SCREEN_WIDTH = 128;
+    int SCREEN_HIGHT = 64;
 private:
     Adafruit_SSD1306 *display;
     bool isNightMod = false;

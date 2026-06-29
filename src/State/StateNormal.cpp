@@ -12,6 +12,10 @@ void StateNormal::enter()
     isDrawingBattery = true;
 
     VoiceControl::getInstance().begin();
+    MovementModule::getInstance().MoveSpeed();
+
+    //Включаем фазы питания
+    phaseControl(ENABLED, ENABLED, ENABLED, ENABLED);
 }
 //#define UPDATE_TIME 1000
 float logic_timer = 0;
@@ -29,8 +33,8 @@ void StateNormal::IdelProcess(float dt)
 
 void StateNormal::update(float dt)
 {
-    if(BatteryModule::getInstance().IsChargeConect() &&
-     BatteryModule::getInstance().getBatteryPercent() < 80)
+    if(BatteryModule::getInstance().IsInPower() &&
+      BatteryModule::getInstance().getBatteryPercent() < 80)
     {
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});
     }
@@ -90,10 +94,10 @@ void StateNormal::IrLogic()
         MovementModule::getInstance().StopMov();
         break;
     case Button2:
-        SoundManager::getInstance().Play("Sound/Hello/Aliona.wav");
+        SoundManager::getInstance().Play("1.wav");
         break;
     case Button3:
-        SoundManager::getInstance().Play("Sound/Hello/Mama.wav");
+        SoundManager::getInstance().Random_Play("Hello");
         break;
     case ButtonHash:
         EventBus::push({EVENT_CHANGE_STATE, STATE_START});
