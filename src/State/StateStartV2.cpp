@@ -25,8 +25,8 @@ void StateStartV2::enter()
     phaseControl(ENABLED,ENABLED);
 
     matrix.Init(*display);
-    // radar.begin(25);
-    lox.begin(41U,false,&Wire1);
+    radar.begin(25);
+    // lox.begin(41U,false,&Wire1);
     // phaseControl(ENABLED);
 }
 void StateStartV2::CreateMainManu()

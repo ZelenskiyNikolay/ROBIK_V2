@@ -27,10 +27,10 @@ public:
         return instance;
     }
 
-    void begin();
-    void Record_Comand();
-    void Update();
-    VoiceCmd Get_Voice_Comand();
+    void begin(){};
+    void Record_Comand(){};
+    void Update(){};
+    VoiceCmd Get_Voice_Comand(){return NONE_VOICE;};
     bool Is_New_Comand = false;
 
     int16_t sample_buffer[SAMPLE_COUNT];
@@ -38,10 +38,10 @@ public:
 
 private:
     VoiceControl();
-    void colect(int16_t *buffer);
-    void processBuffer(int16_t *buffer);
-    void Count_MAE(int16_t *buffer, size_t size);
-    void Stop();
+    void colect(int16_t *buffer){};
+    void processBuffer(int16_t *buffer){};
+    void Count_MAE(int16_t *buffer, size_t size){};
+    void Stop(){};
 
     bool _wasRecording = false;
     bool Comand_Ready = false;

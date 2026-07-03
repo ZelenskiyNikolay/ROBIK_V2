@@ -31,6 +31,6 @@ private:
     unsigned long timer;
     unsigned long timeUpdate = 10000;
     float timer2;
-    float timeUpdate2 = 1000;
+    float timeUpdate2 = 500;
     const float VOLTAGE_DIVIDER = 50.0f;
 };

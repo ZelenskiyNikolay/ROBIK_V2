@@ -475,21 +475,21 @@ void StateStartV2::I2C_Scaner()
 }
 
 
-float dis = 0;
-void StateStartV2::Tof()
-{
-  lox.rangingTest(&measure, false);
+// float dis = 0;
+// void StateStartV2::Tof()
+// {
+//   lox.rangingTest(&measure, false);
 
-  if (measure.RangeStatus != 4)
-  {
-    dis = ((float)(measure.RangeMilliMeter-25))/10;
-    Serial.print("Distanse:");
-    Serial.print(dis);
-    Serial.println("Cm");
-  }
-  else
-    Serial.println("ERR");
-}
+//   if (measure.RangeStatus != 4)
+//   {
+//     dis = ((float)(measure.RangeMilliMeter-25))/10;
+//     Serial.print("Distanse:");
+//     Serial.print(dis);
+//     Serial.println("Cm");
+//   }
+//   else
+//     Serial.println("ERR");
+// }
 
 void StateStartV2::One_Measure_Test()
 {
@@ -497,8 +497,8 @@ void StateStartV2::One_Measure_Test()
 
   if (a == OK)
   {
-    // radar.OneСornerMeasure(2);
-    Tof();
+    radar.OneСornerMeasure(2);
+    // Tof();
   }
 
   if (millis() - lastToggleTime > 1000)
@@ -507,12 +507,12 @@ void StateStartV2::One_Measure_Test()
     lastToggleTime = millis();
 
     display->drawText(" -\\One Measure Test/-", 0, 0, 1);
-    // if (radar.IsOneСornerMeasureRedy)
-    // {
+    if (radar.IsOneСornerMeasureRedy)
+    {
       char buffer1[32];
-      sprintf(buffer1, "Measure: %.2fcm", dis);//((float)radar.Measure / 10));
+      sprintf(buffer1, "Measure: %.2fcm", ((float)radar.Measure / 10));
       display->drawText(buffer1, 0, 30);
-    // }
+    }
 
     display->NeedUpdate = true;
   }

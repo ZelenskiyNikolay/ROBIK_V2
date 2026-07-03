@@ -75,7 +75,4 @@ private:
     bool is_Screensaver_Play = false;
     Matrix matrix;
     Radar radar;
-
-    Adafruit_VL53L0X lox;
-    VL53L0X_RangingMeasurementData_t measure;
 };
