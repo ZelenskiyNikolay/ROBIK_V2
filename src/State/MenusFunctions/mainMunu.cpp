@@ -416,11 +416,13 @@ void StateStartV2::radar_Test()
   }
 }
 
+char buffers[5][32];
 void scanI2C()
 {
   Serial.println("\n[I2C] Запуск сканирования шины...");
   byte error, address;
   int nDevices = 0;
+  char buffer1[32];
 
   for (address = 1; address < 127; address++)
   {
@@ -431,6 +433,11 @@ void scanI2C()
     if (error == 0)
     {
       Serial.print("[I2C] Найден девайс на адресе: 0x");
+      
+      if (nDevices < 5)
+      {
+        sprintf(buffers[nDevices], "[I2C] %d: 0x%02X", nDevices, address);
+      }
       if (address < 16)
         Serial.print("0");
       Serial.print(address, HEX);
@@ -470,10 +477,12 @@ void StateStartV2::I2C_Scaner()
 
     display->drawText(" -\\\\I2C Scaner//-", 0, 0, 1);
 
+    for(int i=0; i<5;i++)
+      display->drawText(buffers[i],0,10 + i*10,1);
+
     display->NeedUpdate = true;
   }
 }
-
 
 // float dis = 0;
 // void StateStartV2::Tof()
@@ -524,7 +533,7 @@ void StateStartV2::DrawClock()
   {
     display->clear();
     lastToggleTime = millis();
-    
+
     _time = RTCModule::getInstance().getTime();
     char buffer[9]; // "HH:MM"
 

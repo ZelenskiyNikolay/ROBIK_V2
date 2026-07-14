@@ -1,12 +1,12 @@
 #include <Arduino.h>
-#include "MOVE/Motor.h"
+// #include "MOVE/Motor.h"
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
 
-#include "MOVE/MotionController.h"
-#include "MOVE/SafetyModule.h"
+// #include "MOVE/MotionController.h"
+// #include "MOVE/SafetyModule.h"
 
 #include "Sensors/Compass.h"
 #include "Sensors/IRSensor.h"
@@ -25,6 +25,7 @@
 #include "Module/BatteryModule.h"
 #include "Module/RTCModule.h"
 #include "Core/timer.h"
+#include "Connection/SlaveConnection.h"
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64

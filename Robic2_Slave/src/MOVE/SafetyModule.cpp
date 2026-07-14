@@ -1,5 +1,7 @@
 #include "SafetyModule.h"
 
+MovementCommand moveBridge;
+
 SafetyModule::SafetyModule()
     : sensorLeft(11), sensorRight(12), sensorBack(24), motion()
 {
@@ -8,17 +10,9 @@ SafetyModule::SafetyModule()
 }
 
 void SafetyModule::MoveSpeed(bool HiSpeed) { motion.MoveSpeed(HiSpeed); }
-// int Time = 1000;
-// float timer = 0;
+
 void SafetyModule::update(float dt)
 {
-    // timer -= dt;
-    // if (timer < 0)
-    // {
-    //     Serial.print("ЕdgeAlign: ");
-    //     Serial.println(edgeAlign);
-    //     timer = Time;
-    // }
     if (!edgeAlign)
     {
         if (moveBridge.Command == IDLE && moveBridge.New_Command)
@@ -38,7 +32,6 @@ void SafetyModule::update(float dt)
                     break;
                 case EDGE_ALIG:
                     edgeAlign = true;
-                    //NewMov(moveBridge.Command);
                     moveBridge.IsBusy = true;
                     moveBridge.New_Command = false;
                     break;
@@ -49,7 +42,6 @@ void SafetyModule::update(float dt)
                     moveBridge.IsBusy = false;
                     break;
                 default:
-                    MoveSpeed(moveBridge.HiSpeed);
                     NewMov(moveBridge.Command, moveBridge.Left, moveBridge.Right);
                     moveBridge.IsBusy = true;
                     moveBridge.New_Command = false;

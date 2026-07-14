@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "Robic2_Slave"
 		}
 	],
 	"settings": {}

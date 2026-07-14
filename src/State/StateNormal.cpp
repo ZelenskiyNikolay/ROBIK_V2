@@ -16,8 +16,10 @@ void StateNormal::enter()
 
     //Включаем фазы питания
     phaseControl(ENABLED, ENABLED, ENABLED, ENABLED);
+
+    SlaveConnection::getInstance().MoveSpeed();
 }
-//#define UPDATE_TIME 1000
+
 float logic_timer = 0;
 VoiceCmd VoiceComand;
 bool New_Comand = false;
@@ -108,10 +110,12 @@ void StateNormal::IrLogic()
         break;
 
     case Button4:
-        MovementModule::getInstance().NewMov(MotionState::TURN_LEFT);
+        SlaveConnection::getInstance().NewMov(MotionState::TURN_LEFT);
+        // MovementModule::getInstance().NewMov(MotionState::TURN_LEFT);
         break;
     case Button6:
-        MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT);
+        SlaveConnection::getInstance().NewMov(MotionState::TURN_RIGHT);
+        // MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT);
         break;
 
     case Button5:
@@ -120,20 +124,25 @@ void StateNormal::IrLogic()
 
     case Button0:
         HiSpeed = !HiSpeed;
-        MovementModule::getInstance().MoveSpeed(HiSpeed);
+        SlaveConnection::getInstance().MoveSpeed(HiSpeed);
+        // MovementModule::getInstance().MoveSpeed(HiSpeed);
         break;
 
     case ButtonUp:
-        MovementModule::getInstance().NewMov(MotionState::FORWARD, 0.5f, 0.5f);
+        SlaveConnection::getInstance().NewMov(MotionState::FORWARD, 0.5f, 0.5f);
+        // MovementModule::getInstance().NewMov(MotionState::FORWARD, 0.5f, 0.5f);
         break;
     case ButtonDown:
-        MovementModule::getInstance().NewMov(MotionState::BACKWARD, 0.5f, 0.5f);
+        SlaveConnection::getInstance().NewMov(MotionState::BACKWARD, 0.5f, 0.5f);
+        // MovementModule::getInstance().NewMov(MotionState::BACKWARD, 0.5f, 0.5f);
         break;
     case ButtonLeft:
-        MovementModule::getInstance().NewMov(MotionState::TURN_LEFT90);
+        SlaveConnection::getInstance().NewMov(MotionState::TURN_LEFT90);
+        // MovementModule::getInstance().NewMov(MotionState::TURN_LEFT90);
         break;
     case ButtonRight:
-        MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
+        SlaveConnection::getInstance().NewMov(MotionState::TURN_RIGHT90);
+        // MovementModule::getInstance().NewMov(MotionState::TURN_RIGHT90);
         break;
 
     case ButtonOk:

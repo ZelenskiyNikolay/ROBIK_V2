@@ -7,6 +7,7 @@
 #include "Sensors/IRSensor.h"
 #include "Sound/SoundManager.h"
 #include "SoundMic/VoiceControl.h"
+#include "Connection/SlaveConnection.h"
 
 #define IDEL_TIMER 120000
 class StateNormal : public State

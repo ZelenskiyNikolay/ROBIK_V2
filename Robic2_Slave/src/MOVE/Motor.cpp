@@ -1,5 +1,6 @@
 #include "Motor.h"
 
+//Motor(uint8_t step_pin, uint8_t dir_pin)
 Motor::Motor(uint8_t step_pin, uint8_t dir_pin)
 {
     step = step_pin;

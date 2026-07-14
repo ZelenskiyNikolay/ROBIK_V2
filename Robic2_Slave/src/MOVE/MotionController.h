@@ -11,7 +11,7 @@
 #define STEPS_1_DEGREE 12
 #define STEPS_PER_REV 2048 // 28BYJ-48 (half-step)
 
-#define EN_PIN 10
+#define EN_PIN 8
 
 class MotionController
 {

@@ -1,7 +1,7 @@
 #include "MotionController.h"
 
 MotionController::MotionController()
-    : motorL(6, 7), motorR(8, 9)
+    : motorL(4, 5), motorR(6, 7)
 {
 }
 
@@ -16,6 +16,10 @@ void MotionController::begin()
 
 void MotionController::MoveSpeed(bool HiSpeed)
 {
+    Serial.print("Меняю скорость моторов на: ");
+    if (HiSpeed)
+        Serial.println("Высокую");
+    else Serial.println("Низкую");
     motorL.SetSpeed(HiSpeed);
     motorR.SetSpeed(HiSpeed);
 }

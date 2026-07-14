@@ -22,6 +22,7 @@ void setup()
 
   fsm = new FSM(new StateStartV2(*displaySys), displaySys);
 
+  SlaveConnection::getInstance().Init();
   Compass::getInstance().begin();
   SDModule::getInstance().begin();
   SoundManager::getInstance().Init();
@@ -62,15 +63,14 @@ void setup1()
 
   delay(1500);
 
-  SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.01f, 0.01f);
+  // SafetyModule::getInstance().NewMov(MotionState::FORWARD, 0.01f, 0.01f);
   MicRecorder::getInstance().Init(27);
 }
 void loop1()
 {
   float dt1 = getDeltaTime1();
 
-
-  SafetyModule::getInstance().update(dt1);
+  // SafetyModule::getInstance().update(dt1);
 
   FpsCount1(dt1);
   tight_loop_contents();
